@@ -1,0 +1,1 @@
+# galutinis_atsiskaitymas
