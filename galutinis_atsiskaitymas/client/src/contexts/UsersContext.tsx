@@ -47,12 +47,31 @@ const UsersProvider = ({ children } : ChildrenElementProp) => {
         });
     }
 
+    const register = async (registerInfo: Omit<User, '_id'>) => {
+        const Back_Response = await fetch(`http://localhost:5500/users/register`, {
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify(registerInfo) 
+        }).then(res => res.json());
+        if('error' in Back_Response){
+            return { error: Back_Response.error };
+        }
+        dispatch({
+            type: 'setUser',
+            user: Back_Response.user
+        });
+        return { success: Back_Response.success }
+    }
+
     return(
         <UsersContext.Provider
             value={{
                 loggedInUser,
                 login,
-                logOut
+                logOut,
+                register
             }}
         >
             { children }
