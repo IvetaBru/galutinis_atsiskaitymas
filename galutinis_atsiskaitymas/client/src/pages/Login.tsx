@@ -1,16 +1,22 @@
 import styled from 'styled-components';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Link } from 'react-router';
+import { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router';
 
 import InputField from '../components/UI/molecules/InputField';
-import { User } from '../types';
+import UsersContext from '../contexts/UsersContext';
+import { User, UserContextType } from '../types';
 
 const StyledSection = styled.section`
     
 `
 
 const Login = () => {
+
+    const { login } = useContext(UsersContext) as UserContextType;
+    const [afterLoginMessage, setAfterLoginMessage] = useState('');
+    const navigate = useNavigate();
 
     const formikInitialValues: Pick<User, 'username' | 'password'> = {
         username: '',
@@ -29,7 +35,14 @@ const Login = () => {
             .trim()
         }),
         onSubmit: async(values) => {
-
+            setAfterLoginMessage('');
+            const Context_Response = await login(values);
+            if('error' in Context_Response){
+                setAfterLoginMessage(Context_Response.error);
+            }else{
+                setAfterLoginMessage(Context_Response.success);
+                setTimeout(() => navigate('/'), 3000);
+            }
         }
     });
 
@@ -61,6 +74,9 @@ const Login = () => {
                 />
                 <input type="submit" value="Login" />
             </form>
+            {
+                afterLoginMessage && <p>{afterLoginMessage}</p>
+            }
             <p>Don't have an account yet? Go <Link to="/register">create</Link> one!</p>
         </StyledSection>
     );
