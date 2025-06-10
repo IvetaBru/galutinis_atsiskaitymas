@@ -4,7 +4,7 @@ export type ChildrenNodeProp = { children: React.ReactNode };
 export type User = {
     _id: string,
     username: string,
-    fullNmae: string,
+    fullName: string,
     email: string,
     password: string,
     passwordRepeat?: string,
@@ -19,7 +19,8 @@ export type UserContextReducerActions =
 export type UserContextType = {
     loggedInUser: Omit<User, "password"> | null,
     login: ({ username, password }: Pick<User, "username" | "password">) => Promise<{ error: string } | { success: string }>,
-    logOut: () => void
+    logOut: () => void,
+    register: (registerInfo: Omit<User, "_id">) => Promise<{ error: string} | {success: string}>
 };
 
 export type InputFieldProps = {
