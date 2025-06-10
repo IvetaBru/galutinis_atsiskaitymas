@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 
+import users from './routes/users.js';
+
 const PORT = process.env.PORT || 5501;
 const corsOptions = {
     origin: "http://localhost:5173"
@@ -18,7 +20,7 @@ app.listen(PORT, () => {
 });
 
 // users
-// app.use('/users', users);
+app.use('/users', users);
 
 // questions
 // app.use('/questions', questions);
