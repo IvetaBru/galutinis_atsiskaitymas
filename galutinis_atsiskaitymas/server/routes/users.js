@@ -1,10 +1,16 @@
 import { Router } from "express";
 
-import { login } from "../controllers/userController.js";
+import { login, loginAuto, register } from "../controllers/userController.js";
 
 const router = Router();
 
 //Login
-router.post('/login', login)
+router.post('/login', login);
+
+//Login with JWT
+router.get('/loginAuto', loginAuto);
+
+//Register
+router.post('/register', register);
 
 export default router;
