@@ -27,18 +27,25 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
-    const addNewQuestion = (newQuestion: Question) => {
-        fetch(`http://localhost:5500/questions`, {
+    const addNewQuestion = async (newQuestion: Pick<Question, 'title' | 'body' | 'tags'>) => {
+        const accessJWT = localStorage.getItem('accessJWT');
+        const Back_Response = await fetch(`http://localhost:5500/questions`, {
             method: "POST",
             headers: {
-                "Content-Type":"application/json"
+                "Content-Type":"application/json",
+                "Authorization":`Bearer ${accessJWT}`
             },
             body: JSON.stringify(newQuestion)
         });
+        const data = await Back_Response.json();
+        if('error' in data){
+            return { error: data.error };
+        }
         dispatch({
             type: "addQuestion",
-            newQuestion
+            newQuestion: data.newQuestion
         });
+        return { success: data.success };
     }
 
     const deleteQuestion = (_id: Question['_id']) => {

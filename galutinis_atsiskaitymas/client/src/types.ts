@@ -60,7 +60,7 @@ export type QuestionsContextType = {
     questions: Question[],
     dispatch: React.ActionDispatch<[action: QuestionActionTypes]>,
     isLoading: boolean,
-    addNewQuestion: (newQuestion: Question) => void,
+    addNewQuestion: (newQuestion: Pick<Question, 'title' | 'body' | 'tags'>) => Promise<{ error: string } | { success: string }>,
     deleteQuestion: (_id: Question["_id"]) => void,
     editQuestion: (editedQuestion: Question) => void
 }

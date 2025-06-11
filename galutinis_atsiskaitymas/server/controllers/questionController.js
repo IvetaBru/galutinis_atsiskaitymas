@@ -45,7 +45,31 @@ export const getSpecQuestion = async (req, res) => {
 }
 
 export const addNewQuestion = async (req, res) => {
-
+    const client = await connectDB();
+    try{
+        const newQuestion = {
+            _id: generateID(),
+            title: req.body.title,
+            body: req.body.body,
+            authorId: req.user._id,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            isEdited: false,
+            isAnswered: false,
+            tags: req.body.tags || [],
+            answersCount: 0
+        };
+        const DB_RESPONSE = await client
+            .db('Final_Project')
+            .collection('questions')
+            .insertOne(newQuestion);
+        res.send(DB_RESPONSE);
+    }catch(err){
+        console.log(err);
+        res.status(500).send({ error: err.message, message: `Something went wrong with servers, please try again later.` });
+    }finally{
+        await client.close();
+    }
 }
 
 export const deleteQuestion = async (req, res) => {

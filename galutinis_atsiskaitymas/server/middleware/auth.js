@@ -6,7 +6,7 @@ export const verifyJWT = (req, res, next) => {
     if(err){
       res.status(401).send({ error: 'Your session has expired. Please log in again.' });
     } else {
-      req.headers.role = decoded.role;
+      req.user = decoded;
       next();
     }
   });

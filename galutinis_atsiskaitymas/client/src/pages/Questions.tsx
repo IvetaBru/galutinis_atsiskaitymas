@@ -1,8 +1,10 @@
 import styled from "styled-components";
 import { useContext } from "react";
+import { Link } from "react-router";
 
 import QuestionsContext from "../contexts/QuestionsContext";
-import { QuestionsContextType } from "../types";
+import UsersContext from "../contexts/UsersContext";
+import { QuestionsContextType, UserContextType } from "../types";
 import QuestionCard from "../components/UI/molecules/QuestionCard";
 
 const StyledSection = styled.section`
@@ -12,11 +14,17 @@ const StyledSection = styled.section`
 const Questions = () => {
 
     const { questions, isLoading } = useContext(QuestionsContext) as QuestionsContextType;
+    const { loggedInUser } = useContext(UsersContext) as UserContextType;
     const isEmpty = questions.length === 0;
     
     return ( 
         <StyledSection>
             <h2>Questions</h2>
+            {
+                loggedInUser ? 
+                <Link to={'/questions/ask'}><button>Ask Question</button></Link> :
+                <Link to={'/login'}><button>Ask Question</button></Link>
+            }
             <div>
                 {
                     !isLoading && isEmpty && (
@@ -31,8 +39,7 @@ const Questions = () => {
                         />
                     ))
                 }
-            </div>
-            
+            </div>    
         </StyledSection>
      );
 }
