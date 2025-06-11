@@ -62,7 +62,11 @@ export const register = async (req, res) => {
             createdAt: new Date().toISOString()
         }
         await client.db('Final_Project').collection('users').insertOne(newUser);
-        res.send({ success: 'User registered successfully', user: {...newUser, password: undefined }})
+        const { password, ...restUserInfo} = newUser;
+        const JWT_accessToken = createAccessJWT(restUserInfo);
+        res
+            .header('Authorization', JWT_accessToken)
+            .send({ success: 'User registered and logged in successfully', userData: restUserInfo });
     }catch(err){
         res.status(500).send({ error: err, message: 'Something went wrong with server, please try again later'});
     }finally{

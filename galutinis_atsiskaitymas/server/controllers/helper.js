@@ -8,7 +8,7 @@ export const connectDB = async () => {
 }
 
 export const createAccessJWT = (payload) => {
-    return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '30s'});
+    return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '1h'});
 }
 
 export const validateJWT = (provided_JWT) => {
