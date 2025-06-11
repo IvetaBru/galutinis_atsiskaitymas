@@ -68,13 +68,20 @@ const UsersProvider = ({ children } : ChildrenElementProp) => {
                 "Content-Type":"application/json"
             },
             body: JSON.stringify(registerInfo) 
-        }).then(res => res.json());
+        }).then(res => {
+            const authHeader = res.headers.get('Authorization');
+            if(authHeader !== null){
+                sessionStorage.setItem('accessJWT', authHeader);
+            }
+            return res.json();
+
+        });
         if('error' in Back_Response){
             return { error: Back_Response.error };
         }
         dispatch({
             type: 'setUser',
-            user: Back_Response.user
+            user: Back_Response.userData
         });
         return { success: Back_Response.success }
     }
