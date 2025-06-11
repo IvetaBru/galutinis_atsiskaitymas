@@ -1,6 +1,7 @@
-import { createContext, useReducer } from "react";
+import { createContext, useEffect, useReducer } from "react";
 
 import { ChildrenElementProp, User, UserContextReducerActions, UserContextType } from "../types";
+import { useNavigate } from "react-router";
 
 const reducer = (state: Omit<User, 'password'> | null, action: UserContextReducerActions ) : Omit<User, 'password'> | null => {
     switch(action.type){
@@ -20,30 +21,43 @@ const UsersContext = createContext<UserContextType | undefined>(undefined);
 const UsersProvider = ({ children } : ChildrenElementProp) => {
 
     const [loggedInUser, dispatch] = useReducer(reducer, null);
+    const navigate = useNavigate();
 
     type BackLoginResponse = { error: string } | { success: string, userData: Omit<User, 'password'> };
 
-    const login = async (loginInfo: Pick<User, 'username' | 'password'>) => {
+    const login = async (loginInfo: Pick<User, 'username' | 'password'>, keepLoggedIn: boolean) => {
         const Back_Response = await fetch(`http://localhost:5500/users/login`, {
             method: "POST",
             headers: {
                 "Content-Type":"application/json"
             },
             body: JSON.stringify(loginInfo)
-        }).then(headers => headers.json()) as BackLoginResponse;
+        }).then(res => {
+            const authHeader = res.headers.get('Authorization');
+            if(authHeader !== null){
+                if(keepLoggedIn){
+                    localStorage.setItem('accessJWT', authHeader);
+                }else{
+                    sessionStorage.setItem('accessJWT', authHeader);
+                }
+            }
+            return res.json();
+        }) as BackLoginResponse;
         if('error' in Back_Response){
             return { error: Back_Response.error };
         }
         dispatch({
-            type: "setUser",
+            type: 'setUser',
             user: Back_Response.userData
         });
         return { success: Back_Response.success };
     }
 
     const logOut = () => {
+        localStorage.removeItem('accessJWT');
+        sessionStorage.removeItem('accessJWT');
         dispatch({
-            type: "logUserOut"
+            type: 'logUserOut'
         });
     }
 
@@ -64,6 +78,30 @@ const UsersProvider = ({ children } : ChildrenElementProp) => {
         });
         return { success: Back_Response.success }
     }
+
+    useEffect(() => {
+        const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
+        if(accessJWT){
+            fetch(`http://localhost:5500/users/loginAuto`, {
+                headers: {
+                    Authorization: `Bearer ${accessJWT}`
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if('error' in data){
+                    //modal about error
+                    localStorage.removeItem('accessJWT');
+                    setTimeout(() => navigate('/login'), 3000);
+                }else{
+                    dispatch({
+                        type: "setUser",
+                        user: data
+                    });
+                }
+            })
+        }
+    }, [navigate]);
 
     return(
         <UsersContext.Provider

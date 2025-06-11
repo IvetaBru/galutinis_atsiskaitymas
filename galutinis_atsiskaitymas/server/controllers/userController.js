@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { v4 as generateID } from 'uuid';
 
-import { connectDB } from "./helper.js"
+import { connectDB, createAccessJWT, validateJWT } from "./helper.js"
 
 export const login = async (req, res) => {
     const client = await connectDB();
@@ -14,7 +14,10 @@ export const login = async (req, res) => {
             return res.status(404).send({ error: 'No user was found with such name or password'})
         }
         const {password, ...restUserInfo} = DB_RESPONSE;
-        res.send({ success: 'User successfully logged in', userData: restUserInfo});
+        const JWT_accessToken = createAccessJWT(restUserInfo);
+        res
+        .header('Authorization', JWT_accessToken)
+        .send({ success: 'User successfully logged in', userData: restUserInfo});
     }catch(err){
         res.status(500).send({ error: err, message: 'Something went wrong with server, please try again later'});
     }finally{
@@ -23,7 +26,19 @@ export const login = async (req, res) => {
 };
 
 export const loginAuto = async (req, res) => {
-
+    const authHeader = req.headers.authorization;
+    if(!authHeader || !authHeader.startsWith('Bearer ')){
+        return res.status(401).send({ error: 'Authorization header missing or invalid' });
+    }
+    const accessToken = authHeader.split(' ')[1];
+    const verifyResults = await validateJWT(accessToken);
+    if('error' in verifyResults){
+        //res su error message(turi fronte neprijungti - navigate į login)
+        res.status(400).send(verifyResults);
+    }else{
+        //res su body, kur yra decoded info ir fronte vartotojas automatiškai prijungiamas
+        res.send(verifyResults);
+    }
 }
 
 export const register = async (req, res) => {
