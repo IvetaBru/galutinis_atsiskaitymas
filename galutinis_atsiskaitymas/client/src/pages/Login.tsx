@@ -16,6 +16,7 @@ const Login = () => {
 
     const { login } = useContext(UsersContext) as UserContextType;
     const [afterLoginMessage, setAfterLoginMessage] = useState('');
+    const [keepLoggedIn, setKeepLoggedIn] = useState(false);
     const navigate = useNavigate();
 
     const formikInitialValues: Pick<User, 'username' | 'password'> = {
@@ -30,13 +31,13 @@ const Login = () => {
             .trim(),
         password: Yup.string()
             .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,25}$/,
-            'Password must be 8–25 characters long and include uppercase, lowercase, number, and special character (@$!%*?&)')
+            'Password must be 8-25 characters long and include uppercase, lowercase, number, and special character (@$!%*?&)')
             .required('This field is required')
             .trim()
         }),
         onSubmit: async(values) => {
             setAfterLoginMessage('');
-            const Context_Response = await login(values);
+            const Context_Response = await login(values, keepLoggedIn);
             if('error' in Context_Response){
                 setAfterLoginMessage(Context_Response.error);
             }else{
@@ -74,6 +75,16 @@ const Login = () => {
                 />
                 <input type="submit" value="Login" />
             </form>
+            <div>
+                <input
+                    type="checkbox"
+                    name="keepSignedIn" id="keepSignedIn"
+                    onChange={() => {
+                        setKeepLoggedIn(!keepLoggedIn);
+                    }}
+                />
+                <label htmlFor="keepSignedIn">Keep me signed in</label>
+            </div>
             {
                 afterLoginMessage && <p>{afterLoginMessage}</p>
             }

@@ -18,7 +18,7 @@ export type UserContextReducerActions =
 
 export type UserContextType = {
     loggedInUser: Omit<User, "password"> | null,
-    login: ({ username, password }: Pick<User, "username" | "password">) => Promise<{ error: string } | { success: string }>,
+    login: ({ username, password }: Pick<User, "username" | "password">, keepLoggedIn: boolean) => Promise<{ error: string } | { success: string }>,
     logOut: () => void,
     register: (registerInfo: Omit<User, "_id">) => Promise<{ error: string} | {success: string}>
 };
