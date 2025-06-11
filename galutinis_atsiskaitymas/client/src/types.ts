@@ -35,3 +35,31 @@ export type InputFieldProps = {
     touched: boolean | undefined,
     errors: string | undefined
 };
+
+export type Question = {
+    _id: string,
+    title: string,
+    body: string,
+    authorId: string,
+    createdAt: string | Date,
+    updatedAt: string | Date,
+    isEdited: boolean,
+    tags: string[],
+    answersCount: number,
+    isAnswered: boolean
+}
+
+export type QuestionActionTypes = 
+    { type: 'setData', data: Question[] } |
+    { type: 'addQuestion', newQuestion: Question } |
+    { type: 'deleteQuestion', _id: Question['_id']} |
+    { type: 'editQuestion', editedQuestion: Question };
+
+export type QuestionsContextType = {
+    questions: Question[],
+    dispatch: React.ActionDispatch<[action: QuestionActionTypes]>,
+    isLoading: boolean,
+    addNewQuestion: (newQuestion: Question) => void,
+    deleteQuestion: (_id: Question["_id"]) => void,
+    editQuestion: (editedQuestion: Question) => void
+}
