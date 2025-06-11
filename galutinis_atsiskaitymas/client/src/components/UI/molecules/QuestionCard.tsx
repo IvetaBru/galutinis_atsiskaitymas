@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Link } from "react-router";
 
 import { Question } from "../../../types";
 
@@ -12,14 +13,17 @@ const StyledDiv = styled.div`
 `
 
 const QuestionCard = ({ data }: Props) => {
-
+    
     return ( 
         <StyledDiv>
             <span>{new Date(data.createdAt).toLocaleDateString()}</span>
             <p>{data.authorUsername}</p>
-            <h3>{data.title}</h3>
+            <Link to={`/questions/${data._id}`}>
+                <h3>{data.title}</h3>
+            </Link>
             <p>{data.body}</p> 
             <span>Answers: {data.answersCount}</span>
+            <p>{data.tags.join(' | ')}</p>
         </StyledDiv>
      );
 }

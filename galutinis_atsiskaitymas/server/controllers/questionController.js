@@ -24,7 +24,24 @@ export const getAllQuestions = async (req, res) => {
 };
 
 export const getSpecQuestion = async (req, res) => {
+    const client = await connectDB();
+    try{
+        const { _id } = req.params;
+        const question = await client
+        .db('Final_Project')
+        .collection('questions')
+        .findOne({ _id: _id });
 
+        if(!question){
+            return res.status(404).send({ error: `Question with id ${_id} not found.`});
+        }
+        res.json(question);
+    }catch(err){
+        console.error(err);
+        res.status(500).send({ error: err, message: `Something went wrong with server, please try again later.` });
+    }finally{
+        await client.close();
+    }
 }
 
 export const addNewQuestion = async (req, res) => {
