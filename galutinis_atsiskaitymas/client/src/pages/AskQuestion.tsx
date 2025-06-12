@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 
 import InputField from "../components/UI/molecules/InputField";
+import MultiSelect from "../components/UI/molecules/MultiSelect";
 import QuestionsContext from "../contexts/QuestionsContext";
 import { Question, QuestionsContextType } from "../types";
 
@@ -76,26 +77,15 @@ const AskQuestion = () => {
                     placeholder="Enter your question here..." 
                 />
                 {formik.touched.body && formik.errors.body && <p>{formik.errors.body}</p>}
-                <label htmlFor="tags">Tags:</label>
-                <select 
-                    name="tags" 
-                    id="tags"
-                    multiple
-                    value={formik.values.tags}
-                    onChange={(e) => {
-                        const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
-                        formik.setFieldValue('tags', selectedOptions);
-                    }}
-                >
-                    {
-                        allowedTags.map(tag => (
-                            <option key={tag} value={tag}>{tag}</option>
-                        ))
-                    }
-                </select>
-                {formik.touched.tags && formik.errors.tags && <p>{formik.errors.tags}</p>}
-
-                <input type="submit" value="Add Question" />
+                <MultiSelect
+                    options={allowedTags}
+                    selected={formik.values.tags}
+                    onChange={(values) => formik.setFieldValue('tags', values)}
+                    maxSelected={5}
+                    errors={formik.errors.tags}
+                    touched={formik.touched.tags}
+                />
+            <input type="submit" value="Add Question" />
             </form>
             {
                 afterAddMessage && <p>{afterAddMessage}</p>
