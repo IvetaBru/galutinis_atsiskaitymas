@@ -59,11 +59,11 @@ export const addNewQuestion = async (req, res) => {
             tags: req.body.tags || [],
             answersCount: 0
         };
-        const DB_RESPONSE = await client
+        await client
             .db('Final_Project')
             .collection('questions')
             .insertOne(newQuestion);
-        res.send(DB_RESPONSE);
+        res.send({ success: 'Question successfully added', newQuestion });
     }catch(err){
         console.log(err);
         res.status(500).send({ error: err.message, message: `Something went wrong with servers, please try again later.` });

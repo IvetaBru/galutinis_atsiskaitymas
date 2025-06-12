@@ -23,34 +23,37 @@ const UsersProvider = ({ children } : ChildrenElementProp) => {
     const [loggedInUser, dispatch] = useReducer(reducer, null);
     const navigate = useNavigate();
 
-    type BackLoginResponse = { error: string } | { success: string, userData: Omit<User, 'password'> };
+    // type BackLoginResponse = { error: string } | { success: string, userData: Omit<User, 'password'> };
 
     const login = async (loginInfo: Pick<User, 'username' | 'password'>, keepLoggedIn: boolean) => {
-        const Back_Response = await fetch(`http://localhost:5500/users/login`, {
-            method: "POST",
-            headers: {
-                "Content-Type":"application/json"
-            },
-            body: JSON.stringify(loginInfo)
-        }).then(res => {
-            const authHeader = res.headers.get('Authorization');
-            if(authHeader !== null){
-                if(keepLoggedIn){
-                    localStorage.setItem('accessJWT', authHeader);
-                }else{
-                    sessionStorage.setItem('accessJWT', authHeader);
-                }
+        try{
+            const Back_Response = await fetch(`http://localhost:5500/users/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type":"application/json"
+                },
+                body: JSON.stringify(loginInfo)
+        });
+        const data = await Back_Response.json();
+        if ('error' in data){
+            return { error: data.error };
+        }
+        const jwt = data.accessJWT || Back_Response.headers.get("Authorization");
+        if(jwt){
+            if(keepLoggedIn){
+                localStorage.setItem('accessJWT', jwt);
+            }else{
+                sessionStorage.setItem('accessJWT', jwt);
             }
-            return res.json();
-        }) as BackLoginResponse;
-        if('error' in Back_Response){
-            return { error: Back_Response.error };
         }
         dispatch({
-            type: 'setUser',
-            user: Back_Response.userData
+            type: "setUser",
+            user: data.userData
         });
-        return { success: Back_Response.success };
+        return { success: data.success };
+        }catch{
+            return { error: 'Login failed, please try again'};
+        }
     }
 
     const logOut = () => {

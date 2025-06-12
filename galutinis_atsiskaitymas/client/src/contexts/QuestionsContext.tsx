@@ -28,7 +28,7 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     const navigate = useNavigate();
 
     const addNewQuestion = async (newQuestion: Pick<Question, 'title' | 'body' | 'tags'>) => {
-        const accessJWT = localStorage.getItem('accessJWT');
+        const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
         const Back_Response = await fetch(`http://localhost:5500/questions`, {
             method: "POST",
             headers: {
