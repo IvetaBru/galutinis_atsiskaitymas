@@ -69,10 +69,12 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     }
 
     const editQuestion = (editedQuestion: Question) => {
+        const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
         fetch(`http://localhost:5500/questions/${editedQuestion._id}`, {
             method: "PUT",
             headers: {
-                "Content-Type":"application/json"
+                "Content-Type":"application/json",
+                Authorization: `Bearer ${accessJWT}`
             },
             body: JSON.stringify(editedQuestion)
         })
@@ -85,11 +87,7 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
                 type: "editQuestion",
                 editedQuestion
             });
-            navigate('questions');
-        })
-        .catch(err => {
-            console.log('Failed', err);
-            alert("Something went wrong");
+            navigate('/questions')
         });
     }
 

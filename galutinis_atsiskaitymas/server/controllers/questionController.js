@@ -95,7 +95,7 @@ export const deleteQuestion = async (req, res) => {
             .db('Final_Project')
             .collection('questions')
             .deleteOne({ _id });
-            
+
         if(result.deletedCount){
             res.send({ success: `Question with ID ${_id} was deleted successfully.` });
         }else{
@@ -110,5 +110,46 @@ export const deleteQuestion = async (req, res) => {
 }
 
 export const editQuestion = async (req, res) => {
+    const client = await connectDB();
+    try{
+        const { _id } = req.params;
+        const userId = req.user._id;
 
+        const existingQuestion = await client
+            .db('Final_Project')
+            .collection('questions')
+            .findOne({ _id });
+
+        if(!existingQuestion){
+           return res.status(404).send({ error: 'Question not found' }); 
+        }
+        if (existingQuestion.authorId !== userId) {
+            return res.status(403).send({ error: 'You can only edit your own questions' });
+        }
+
+        const updatedFields = {
+            title: req.body.title,
+            body: req.body.body,
+            tags: req.body.tags || [],
+            updatedAt: new Date(),
+            isEdited: true
+        };
+
+        const result = await client
+            .db('Final_Project')
+            .collection('questions')
+            .updateOne(
+                {_id},
+                {$set: updatedFields}
+            );
+        if (result.modifiedCount === 0) {
+            return res.status(400).send({ error: 'No changes were made' });
+        }
+        res.send({ success: 'Question updated successfully' });
+    }catch(err){
+        console.log(err);
+        res.status(500).send({ error: err.message, message: `Something went wrong with servers, please try again later.` });
+    }finally{
+        await client.close();
+    }
 }
