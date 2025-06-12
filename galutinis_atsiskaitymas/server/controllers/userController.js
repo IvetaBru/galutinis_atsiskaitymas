@@ -17,7 +17,7 @@ export const login = async (req, res) => {
         const JWT_accessToken = createAccessJWT(restUserInfo);
         res
         .header('Authorization', JWT_accessToken)
-        .send({ success: 'User successfully logged in', userData: restUserInfo});
+        .send({ success: 'User successfully logged in', userData: restUserInfo, accessJWT: JWT_accessToken});
     }catch(err){
         res.status(500).send({ error: err, message: 'Something went wrong with server, please try again later'});
     }finally{

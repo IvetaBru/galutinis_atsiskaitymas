@@ -7,6 +7,7 @@ import Questions from './pages/Questions';
 import SpecificQuestion from './pages/SpecificQuestion';
 import UserInfo from './pages/UserInfo';
 import MainOutlet from './components/outlets/MainOutlet';
+import AskQuestion from './pages/AskQuestion';
 
 const App = () => {
   
@@ -19,6 +20,7 @@ const App = () => {
           <Route index element={<Home/>}/>
           <Route path='questions' element={<Questions/>}/>
           <Route path='questions/:_id' element={<SpecificQuestion/>}/>
+          <Route path='questions/ask' element={<AskQuestion/>}/>
           <Route path='user' element={<UserInfo/>}/>
         </Route>
       </Routes>
