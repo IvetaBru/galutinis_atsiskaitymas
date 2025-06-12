@@ -49,18 +49,22 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     }
 
     const deleteQuestion = (_id: Question['_id']) => {
+        const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
         const confirm = window.confirm("Do you want to delete it?");
         if (!confirm) return;
 
         fetch(`http://localhost:5500/questions/${_id}`, {
-            method: "DELETE"
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${accessJWT}`
+            },
         })
         .then(() => {
             dispatch({
                 type: "deleteQuestion",
                 _id
             });
-            navigate('questions')
+            navigate('/questions')
         });
     }
 

@@ -73,7 +73,40 @@ export const addNewQuestion = async (req, res) => {
 }
 
 export const deleteQuestion = async (req, res) => {
+    const client = await connectDB();
+    try{
+        const { _id } = req.params;
+        const userId = req.user?._id;
+        if(!userId){
+            return res.status(401).send({error: 'Unauthorized. No user'});
+        }
+        const question = await client
+        .db('Final_Project')
+        .collection('questions')
+        .findOne({ _id });
 
+        if (!question) {
+            return res.status(404).send({ error: `No question with ID ${_id}.` });
+        }
+        if (question.authorId !== userId) {
+            return res.status(403).send({ error: 'You are not allowed to delete this question.' });
+        }
+        const result = await client
+            .db('Final_Project')
+            .collection('questions')
+            .deleteOne({ _id });
+            
+        if(result.deletedCount){
+            res.send({ success: `Question with ID ${_id} was deleted successfully.` });
+        }else{
+            res.status(404).send({ error: `Failed to delete. No question with ID ${_id}.` });
+        }
+    }catch(err){
+        console.log(err);
+        res.status(500).send({ error: err.message, message: `Something went wrong with servers, please try again later.` });
+    }finally{
+        await client.close();
+    }
 }
 
 export const editQuestion = async (req, res) => {

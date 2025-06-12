@@ -3,7 +3,8 @@ import { useContext, useState, useEffect } from "react";
 import { useParams } from "react-router";
 
 import QuestionsContext from "../contexts/QuestionsContext";
-import { Question, QuestionsContextType } from "../types";
+import { Question, QuestionsContextType, UserContextType } from "../types";
+import UsersContext from "../contexts/UsersContext";
 
 const StyledSection = styled.section`
     
@@ -12,7 +13,8 @@ const StyledSection = styled.section`
 const SpecificQuestion = () => {
 
     const { _id } = useParams();
-    const { questions, isLoading } = useContext(QuestionsContext) as QuestionsContextType;
+    const { questions, isLoading, deleteQuestion } = useContext(QuestionsContext) as QuestionsContextType;
+    const { loggedInUser } = useContext(UsersContext) as UserContextType;
 
     const [ question, setQuestion ] = useState<Question | null>(null);
 
@@ -25,6 +27,10 @@ const SpecificQuestion = () => {
 
     return ( 
         <StyledSection>
+            {
+                question && question.authorId === loggedInUser?._id && (
+                <button onClick={() => deleteQuestion(question._id)}>Delete</button>)
+            }
             {
                 isLoading ? <p>Data is loading...</p> :
                 !question ? <p>Question not found</p> :
