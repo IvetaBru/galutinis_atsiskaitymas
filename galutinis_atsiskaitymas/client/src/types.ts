@@ -70,6 +70,6 @@ export type QuestionActionTypes =
         selected: string[],
         onChange: (selected: string[]) => void,
         maxSelected?: number,
-        errors: string | string[] | undefined,
-        touched: boolean | undefined
+        errors?: string | string[] | undefined,
+        touched?: boolean | undefined
     }

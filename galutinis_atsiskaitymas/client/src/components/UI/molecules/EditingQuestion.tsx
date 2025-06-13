@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 
 import QuestionsContext from "../../../contexts/QuestionsContext";
 import { Question, QuestionsContextType } from "../../../types";
+import MultiSelect from "./MultiSelect";
 
 type Props = {
     question: Question,
@@ -14,10 +15,12 @@ const EditingQuestion = ({ question, onClose }: Props) => {
     const { editQuestion } = useContext(QuestionsContext) as QuestionsContextType;
     const [afterEditMessage, setAfterEditMessage] = useState('');
     const navigate = useNavigate();
+    const allowedTags = ["food","accommodation","excursions","shopping","transport","budget","tips","safety","culture","language","documents","weather","gear","local","solo-travel","family","visa"];
+
     const [ formData, setFormData ] = useState({
         title: question.title,
         body: question.body,
-        tags: question.tags.join(", ")
+        tags: question.tags
     });
     const handleChange = (field: keyof typeof formData, value: string) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
@@ -27,7 +30,7 @@ const EditingQuestion = ({ question, onClose }: Props) => {
             ...question,
             title: formData.title,
             body: formData.body,
-            tags: formData.tags.split(",").map((t) => t.trim())
+            tags: formData.tags
         };
         const res = await editQuestion(updated);
         if('error' in res) {
@@ -52,10 +55,10 @@ const EditingQuestion = ({ question, onClose }: Props) => {
                 value={formData.body}
                 onChange={(e) => handleChange("body", e.target.value)}
             />
-            <input
-                value={formData.tags}
-                onChange={(e) => handleChange("tags", e.target.value)}
-                placeholder="e.g. tips, food..."
+            <MultiSelect
+                options={allowedTags}
+                selected={formData.tags}
+                onChange={(editedTags) => setFormData({ ...formData, tags: editedTags })}
             />
             <button onClick={handleSave}>Save</button>
             <button onClick={onClose}>Cancel</button>
