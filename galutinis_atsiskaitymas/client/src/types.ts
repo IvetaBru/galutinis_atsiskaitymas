@@ -49,7 +49,7 @@ export type QuestionActionTypes =
         isLoading: boolean,
         addNewQuestion: (newQuestion: Pick<Question, 'title' | 'body' | 'tags'>) => Promise<{ error: string } | { success: string }>,
         deleteQuestion: (_id: Question["_id"]) => void,
-        editQuestion: (editedQuestion: Question) => void
+        editQuestion: (editedQuestion: Question) => Promise<{ error: string } | { success: string }>
     }
     
     export type InputFieldProps = {
