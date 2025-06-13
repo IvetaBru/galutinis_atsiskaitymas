@@ -29,7 +29,7 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
 
     const addNewQuestion = async (newQuestion: Pick<Question, 'title' | 'body' | 'tags'>) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
-        const Back_Response = await fetch(`http://localhost:5500/questions`, {
+        const backResponse = await fetch(`http://localhost:5500/questions`, {
             method: "POST",
             headers: {
                 "Content-Type":"application/json",
@@ -37,7 +37,7 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
             },
             body: JSON.stringify(newQuestion)
         });
-        const data = await Back_Response.json();
+        const data = await backResponse.json();
         if('error' in data){
             return { error: data.error };
         }
@@ -68,27 +68,26 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
         });
     }
 
-    const editQuestion = (editedQuestion: Question) => {
+    const editQuestion = async (editedQuestion: Question) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
-        fetch(`http://localhost:5500/questions/${editedQuestion._id}`, {
-            method: "PUT",
+        const backResponse = await fetch(`http://localhost:5500/questions/${editedQuestion._id}`, {
+            method: "PATCH",
             headers: {
                 "Content-Type":"application/json",
                 Authorization: `Bearer ${accessJWT}`
             },
             body: JSON.stringify(editedQuestion)
         })
-        .then(res => {
-            if(!res.ok) throw new Error('Update failed');
-            return res.json();
-        })
-        .then(() => {
-            dispatch({
-                type: "editQuestion",
-                editedQuestion
-            });
-            navigate('/questions')
+        const data = await backResponse.json();
+
+        if ('error' in data){
+            return { error: data.error };
+        }
+        dispatch({
+            type: "editQuestion",
+            editedQuestion
         });
+        return { success: data.success };
     }
 
     useEffect(() => {
