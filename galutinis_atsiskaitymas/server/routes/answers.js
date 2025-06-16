@@ -8,7 +8,7 @@ const router = Router();
 //get all answers for specific question
 router.get('/:questionId/answers', getAnswersForQuestion);
 
-//add answer to specifik question
+//add answer to specific question
 router.post('/:questionId/answers', verifyJWT, addAnswerToQuestion);
 
 //delete answer

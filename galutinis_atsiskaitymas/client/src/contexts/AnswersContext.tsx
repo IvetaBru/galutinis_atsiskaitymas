@@ -33,7 +33,7 @@ const AnswersProvider = ({ children, questionId }: Props) => {
 
     const addNewAnswer = async (newAnswer: Pick<Answer, 'body'>) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
-        const backResponse = await fetch(`http://localhost:5500/question/${questionId}/answers`, {
+        const backResponse = await fetch(`http://localhost:5500/questions/${questionId}/answers`, {
             method: "POST",
             headers: {
                 "Content-Type":"application/json",

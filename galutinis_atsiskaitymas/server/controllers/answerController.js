@@ -23,7 +23,38 @@ export const getAnswersForQuestion = async (req, res) => {
 }
 
 export const addAnswerToQuestion = async (req, res) => {
+    const client = await connectDB();
+    try{
+        const newAnswer = {
+            _id: generateID(),
+            body: req.body.body,
+            authorId: req.user._id,
+            questionId: req.params.questionId,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            isEdited: false
+        };
+        await client
+            .db('Final_Project')
+            .collection('answers')
+            .insertOne(newAnswer);
 
+        const user = await client
+            .db('Final_Project')    
+            .collection('users')
+            .findOne({ _id: req.user._id });
+
+        const newAnswerWithUsername = {
+            ...newAnswer,
+            authorUsername: user?.username || 'Unknown'
+        };
+        res.send({ success: 'Answer successfully added', newAnswer: newAnswerWithUsername });
+    }catch(err){
+        console.log(err);
+        res.status(500).send({ error: err.message, message: `Something went wrong with servers, please try again later.` });
+    }finally{
+        await client.close();
+    }
 }
 
 export const deleteAnswer = async (req, res) => {

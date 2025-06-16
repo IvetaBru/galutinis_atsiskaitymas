@@ -7,6 +7,7 @@ import { AnswersContextType, Question, QuestionsContextType, UserContextType } f
 import UsersContext from "../../../contexts/UsersContext";
 import EditingQuestion from "../molecules/EditingQuestion";
 import AnswersContext from "../../../contexts/AnswersContext";
+import AnswerInput from "../molecules/AnswerInput";
 
 const StyledSection = styled.section`
     
@@ -21,6 +22,7 @@ const SpecificQuestionContent = () => {
 
     const [ question, setQuestion ] = useState<Question | null>(null);
     const [ isEditing, setIsEditing ] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         if(!isLoading && questions.length){
@@ -31,52 +33,61 @@ const SpecificQuestionContent = () => {
 
     return ( 
         <StyledSection>
-            {
-                question && question.authorId === loggedInUser?._id && 
-                <>
-                    <button onClick={() => deleteQuestion(question._id)}>Delete</button>
-                    <button onClick={() => setIsEditing((prev) => !prev)}>
-                        {isEditing ? "Cancel" : "Edit"}
-                    </button>
-                </>
-            }
-            {
-                isLoading ? <p>Data is loading...</p> :
-                !question ? <p>Question not found</p> :
-                isEditing && question.authorId === loggedInUser?._id ? (
-                    <EditingQuestion question={question} onClose={() => setIsEditing(false)} />
-                ) : (
-                    <div>
-                        <span>{new Date(question.createdAt).toLocaleDateString()}</span>
-                        {
-                            question.isEdited && (
-                                <span>Edited {new Date (question.updatedAt).toLocaleDateString()}</span>
-                            )
-                        }
-                        <p>{question.authorUsername}</p>
-                        <h3>{question.title}</h3>
-                        <p>{question.body}</p>
-                        <p>{question.tags.join(' | ')}</p>
-                        {
-                            answerIsLoading ? <p>Answers are loading...</p> :
-                            answers.length > 0 ? (
-                            answers.map( answer => (
-                                <div key={answer._id}>
-                                    <span>{new Date(answer.createdAt).toLocaleDateString()}</span>
-                                    <p>{answer.authorUsername}</p>
-                                    <p>{answer.body}</p>
-                                    {
-                                        answer.isEdited && (
-                                            <span>Edited {new Date (answer.updatedAt).toLocaleDateString()}</span>
-                                        )
-                                    }
-                                </div>
-                            )) 
-                            ) : (<p>No answers yet</p>)
-                        }
-                    </div>
-                )
-            }
+            <div>
+                {
+                    question && question.authorId === loggedInUser?._id && 
+                    <>
+                        <button onClick={() => deleteQuestion(question._id)}>Delete</button>
+                        <button onClick={() => setIsEditing((prev) => !prev)}>
+                            {isEditing ? "Cancel" : "Edit"}
+                        </button>
+                    </>
+                }
+                {
+                    isLoading ? <p>Data is loading...</p> :
+                    !question ? <p>Question not found</p> :
+                    isEditing && question.authorId === loggedInUser?._id ? (
+                        <EditingQuestion question={question} onClose={() => setIsEditing(false)} />
+                    ) : (
+                        <div>
+                            <span>{new Date(question.createdAt).toLocaleDateString()}</span>
+                            {
+                                question.isEdited && (
+                                    <span>Edited {new Date (question.updatedAt).toLocaleDateString()}</span>
+                                )
+                            }
+                            <p>{question.authorUsername}</p>
+                            <h3>{question.title}</h3>
+                            <p>{question.body}</p>
+                            <p>{question.tags.join(' | ')}</p>
+                        </div>
+                    )
+                }
+            </div>
+            <div>
+                {
+                    loggedInUser &&
+                    <button onClick={() => setIsOpen(true)}>Answer</button>
+                }
+                <AnswerInput isOpen={isOpen} onClose={() => setIsOpen(false)}/>
+                {
+                    answerIsLoading ? <p>Answers are loading...</p> :
+                    answers.length > 0 ? (
+                    answers.map( answer => (
+                        <div key={answer._id}>
+                            <span>{new Date(answer.createdAt).toLocaleDateString()}</span>
+                            <p>{answer.authorUsername}</p>
+                            <p>{answer.body}</p>
+                            {
+                                answer.isEdited && (
+                                    <span>Edited {new Date (answer.updatedAt).toLocaleDateString()}</span>
+                                )
+                            }
+                         </div>
+                    )) 
+                    ) : (<p>No answers yet</p>)
+                 }
+            </div>
         </StyledSection>
      );
 }
