@@ -20,8 +20,12 @@ const reducer = (state: Answer[], action: AnswerActionTypes): Answer[] => {
     }
 }
 
+type Props =  ChildrenElementProp & {
+    questionId: string
+}
+
 const AnswersContext = createContext<undefined | AnswersContextType>(undefined);
-const AnswersProvider = ({ children }: ChildrenElementProp) => {
+const AnswersProvider = ({ children, questionId }: Props) => {
 
     const [ answers, dispatch ] = useReducer(reducer, []);
     const [isLoading, setIsLoading] = useState(true);
@@ -29,7 +33,7 @@ const AnswersProvider = ({ children }: ChildrenElementProp) => {
 
     const addNewAnswer = async (newAnswer: Pick<Answer, 'body'>) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
-        const backResponse = await fetch(`http://localhost:5500/answers`, {
+        const backResponse = await fetch(`http://localhost:5500/question/${questionId}/answers`, {
             method: "POST",
             headers: {
                 "Content-Type":"application/json",
@@ -69,7 +73,7 @@ const AnswersProvider = ({ children }: ChildrenElementProp) => {
     }
     const editAnswer = async (editedAnswer: Answer) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
-        const backResponse = await fetch(`http://localhost:5500/questions/${editedAnswer._id}`, {
+        const backResponse = await fetch(`http://localhost:5500/answers/${editedAnswer._id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type":"application/json",
@@ -91,7 +95,7 @@ const AnswersProvider = ({ children }: ChildrenElementProp) => {
 
     useEffect(() => {
         setIsLoading(true);
-        fetch(`http://localhost:5500/answers`)
+        fetch(`http://localhost:5500/questions/${questionId}/answers`)
             .then(res => res.json())
             .then((data: Answer[]) => {
                 dispatch({
@@ -100,7 +104,7 @@ const AnswersProvider = ({ children }: ChildrenElementProp) => {
                 });
                 setIsLoading(false);
             });
-    }, []);    
+    }, [questionId]);    
 
     return(
         <AnswersContext.Provider
