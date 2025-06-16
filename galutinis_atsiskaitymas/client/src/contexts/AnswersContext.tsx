@@ -21,14 +21,14 @@ const reducer = (state: Answer[], action: AnswerActionTypes): Answer[] => {
 }
 
 type Props =  ChildrenElementProp & {
-    questionId: string
+    questionId?: string
 }
 
 const AnswersContext = createContext<undefined | AnswersContextType>(undefined);
 const AnswersProvider = ({ children, questionId }: Props) => {
 
     const [ answers, dispatch ] = useReducer(reducer, []);
-    const [isLoading, setIsLoading] = useState(true);
+    const [answerIsLoading, setAnswerIsLoading] = useState(true);
     // const navigate = useNavigate();
 
     const addNewAnswer = async (newAnswer: Pick<Answer, 'body'>) => {
@@ -94,7 +94,7 @@ const AnswersProvider = ({ children, questionId }: Props) => {
     }
 
     useEffect(() => {
-        setIsLoading(true);
+        setAnswerIsLoading(true);
         fetch(`http://localhost:5500/questions/${questionId}/answers`)
             .then(res => res.json())
             .then((data: Answer[]) => {
@@ -102,7 +102,7 @@ const AnswersProvider = ({ children, questionId }: Props) => {
                     type: "setData",
                     data
                 });
-                setIsLoading(false);
+                setAnswerIsLoading(false);
             });
     }, [questionId]);    
 
@@ -111,7 +111,7 @@ const AnswersProvider = ({ children, questionId }: Props) => {
             value={{
                 answers,
                 dispatch,
-                isLoading,
+                answerIsLoading,
                 addNewAnswer,
                 deleteAnswer,
                 editAnswer

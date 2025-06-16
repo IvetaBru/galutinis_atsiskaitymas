@@ -56,6 +56,7 @@ export type Answer = {
     _id: string,
     questionId: string,
     authorId: string,
+    authorUsername: string,
     body: string,
     createdAt: string,
     updatedAt: string,
@@ -71,7 +72,7 @@ export type AnswerActionTypes =
 export type AnswersContextType = {
     answers: Answer[],
     dispatch: React.ActionDispatch<[action: AnswerActionTypes]>,
-    isLoading: boolean,
+    answerIsLoading: boolean,
     addNewAnswer: (newAnswer: Pick<Answer, 'body'>) => Promise<{ error: string } | { success: string }>,
     deleteAnswer: (_id: Answer['_id']) => void,
     editAnswer: (editedAnswer: Answer) => Promise<{ error: string } | { success: string }>
