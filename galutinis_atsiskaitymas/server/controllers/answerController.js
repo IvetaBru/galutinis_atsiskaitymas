@@ -39,6 +39,14 @@ export const addAnswerToQuestion = async (req, res) => {
             .collection('answers')
             .insertOne(newAnswer);
 
+        await client
+            .db('Final_Project')
+            .collection('questions')
+            .updateOne(
+                { _id: req.params.questionId },
+                { $inc: { answersCount: 1 } }
+            );
+
         const user = await client
             .db('Final_Project')    
             .collection('users')

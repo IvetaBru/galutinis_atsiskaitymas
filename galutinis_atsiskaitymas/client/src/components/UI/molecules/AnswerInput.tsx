@@ -19,7 +19,6 @@ const AnswerInput = ({ isOpen, onClose}: Props) => {
     const [ afterAnswerAddMessage, setAnswerAfterAddMessage ] = useState('');
     const { addNewAnswer } = useContext(AnswersContext) as AnswersContextType;
 
-
     const formikInitialValues: Pick<Answer, 'body'> = {
             body: ''
         }

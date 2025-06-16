@@ -23,7 +23,7 @@ const SpecificQuestionContent = () => {
     const [ question, setQuestion ] = useState<Question | null>(null);
     const [ isEditing, setIsEditing ] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
-
+    
     useEffect(() => {
         if(!isLoading && questions.length){
             const found = questions.find(q => q._id === _id);
