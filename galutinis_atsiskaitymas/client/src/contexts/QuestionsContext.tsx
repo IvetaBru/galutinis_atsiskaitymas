@@ -15,6 +15,12 @@ const reducer = (state: Question[], action: QuestionActionTypes): Question[] => 
             return state.map(q =>
                 q._id === action.editedQuestion._id ? action.editedQuestion : q
             );
+        case 'updateAnswersCount':
+            return state.map(q =>
+                q._id === action.questionId
+                    ? { ...q, answersCount: Math.max( 0, q.answersCount + action.change )}
+                    : q
+        );
         default:
             return state;
     }
@@ -26,6 +32,14 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     const [questions, dispatch] = useReducer(reducer, []);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
+
+    const updateAnswersCount = (questionId: string, change: number) => {
+        dispatch({
+            type: 'updateAnswersCount',
+            questionId,
+            change
+        });
+    };
 
     const addNewQuestion = async (newQuestion: Pick<Question, 'title' | 'body' | 'tags'>) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
@@ -106,6 +120,7 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     return(
         <QuestionsContext.Provider
             value={{
+                updateAnswersCount,
                 questions,
                 dispatch,
                 isLoading,

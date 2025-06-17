@@ -41,9 +41,11 @@ export type QuestionActionTypes =
     { type: 'setData', data: Question[] } |
     { type: 'addQuestion', newQuestion: Question } |
     { type: 'deleteQuestion', _id: Question['_id']} |
-    { type: 'editQuestion', editedQuestion: Question };
+    { type: 'editQuestion', editedQuestion: Question } |
+    { type: 'updateAnswersCount'; questionId: string; change: number };
     
 export type QuestionsContextType = {
+    updateAnswersCount: (questionId: string, change: number) => void,
     questions: Question[],
     dispatch: React.ActionDispatch<[action: QuestionActionTypes]>,
     isLoading: boolean,

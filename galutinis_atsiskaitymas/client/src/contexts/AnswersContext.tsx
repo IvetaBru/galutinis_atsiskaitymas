@@ -1,7 +1,7 @@
-import { createContext, useEffect, useReducer, useState } from "react";
-// import { useNavigate } from "react-router";
+import { createContext, useContext, useEffect, useReducer, useState } from "react";
 
-import { ChildrenElementProp, Answer, AnswerActionTypes, AnswersContextType } from "../types";
+import { ChildrenElementProp, Answer, AnswerActionTypes, AnswersContextType, QuestionsContextType } from "../types";
+import QuestionsContext from "./QuestionsContext";
 
 const reducer = (state: Answer[], action: AnswerActionTypes): Answer[] => {
     switch(action.type){
@@ -28,8 +28,8 @@ const AnswersContext = createContext<undefined | AnswersContextType>(undefined);
 const AnswersProvider = ({ children, questionId }: Props) => {
 
     const [ answers, dispatch ] = useReducer(reducer, []);
-    const [answerIsLoading, setAnswerIsLoading] = useState(true);
-    // const navigate = useNavigate();
+    const [ answerIsLoading, setAnswerIsLoading ] = useState(true);
+    const { updateAnswersCount } = useContext(QuestionsContext) as QuestionsContextType;
 
     const addNewAnswer = async (newAnswer: Pick<Answer, 'body'>) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
@@ -49,6 +49,7 @@ const AnswersProvider = ({ children, questionId }: Props) => {
             type: "addAnswer",
             newAnswer: data.newAnswer
         });
+        updateAnswersCount(questionId!, 1)
         return { success: data.success };
     };
 
@@ -68,7 +69,7 @@ const AnswersProvider = ({ children, questionId }: Props) => {
                 type: "deleteAnswer",
                 _id
             });
-            // navigate('/questions')
+            updateAnswersCount(questionId!, -1)
         });
     }
     const editAnswer = async (editedAnswer: Answer) => {
