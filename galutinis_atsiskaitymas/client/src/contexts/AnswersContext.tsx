@@ -57,7 +57,7 @@ const AnswersProvider = ({ children, questionId }: Props) => {
         const confirm = window.confirm("Do you want to delete it?");
         if (!confirm) return;
     
-        fetch(`http://localhost:5500/answers/${_id}`, {
+        fetch(`http://localhost:5500/questions/answers/${_id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${accessJWT}`
@@ -73,7 +73,7 @@ const AnswersProvider = ({ children, questionId }: Props) => {
     }
     const editAnswer = async (editedAnswer: Answer) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
-        const backResponse = await fetch(`http://localhost:5500/answers/${editedAnswer._id}`, {
+        const backResponse = await fetch(`http://localhost:5500/questions/answers/${editedAnswer._id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type":"application/json",

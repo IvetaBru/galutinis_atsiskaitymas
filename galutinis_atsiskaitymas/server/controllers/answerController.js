@@ -66,7 +66,40 @@ export const addAnswerToQuestion = async (req, res) => {
 }
 
 export const deleteAnswer = async (req, res) => {
+    const client = await connectDB();
+    try{
+        const { _id } = req.params;
+        const userId = req.user?._id;
+        if(!userId){
+            return res.status(401).send({error: 'Unauthorized. No user'});
+        }
+        const answer = await client
+        .db('Final_Project')
+        .collection('answers')
+        .findOne({ _id });
 
+        if (!answer) {
+            return res.status(404).send({ error: `No answer with ID ${_id}.` });
+        }
+        if (answer.authorId !== userId) {
+            return res.status(403).send({ error: 'You are not allowed to delete this question.' });
+        }
+        const result = await client
+            .db('Final_Project')
+            .collection('answers')
+            .deleteOne({ _id });
+
+        if(result.deletedCount){
+            res.send({ success: `Answer with ID ${_id} was deleted successfully.` });
+        }else{
+            res.status(404).send({ error: `Failed to delete. No answer with ID ${_id}.` });
+        }
+    }catch(err){
+        console.log(err);
+        res.status(500).send({ error: err.message, message: `Something went wrong with servers, please try again later.` });
+    }finally{
+        await client.close();
+    }
 }
 
 export const editAnswer = async (req, res) => {

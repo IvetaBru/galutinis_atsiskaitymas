@@ -17,7 +17,7 @@ const SpecificQuestionContent = () => {
 
     const {_id} = useParams();
     const { questions, isLoading, deleteQuestion } = useContext(QuestionsContext) as QuestionsContextType;
-    const { answers, answerIsLoading } = useContext(AnswersContext) as AnswersContextType;
+    const { answers, answerIsLoading, deleteAnswer } = useContext(AnswersContext) as AnswersContextType;
     const { loggedInUser } = useContext(UsersContext) as UserContextType;
 
     const [ question, setQuestion ] = useState<Question | null>(null);
@@ -73,15 +73,21 @@ const SpecificQuestionContent = () => {
                 {
                     answerIsLoading ? <p>Answers are loading...</p> :
                     answers.length > 0 ? (
-                    answers.map( answer => (
-                        <div key={answer._id}>
+                        answers.map( answer => (
+                            <div key={answer._id}>
                             <span>{new Date(answer.createdAt).toLocaleDateString()}</span>
-                            <p>{answer.authorUsername}</p>
-                            <p>{answer.body}</p>
                             {
                                 answer.isEdited && (
                                     <span>Edited {new Date (answer.updatedAt).toLocaleDateString()}</span>
                                 )
+                            }
+                            <p>{answer.authorUsername}</p>
+                            <p>{answer.body}</p>
+                            {
+                                answer.authorId === loggedInUser?._id && 
+                                <>
+                                    <button onClick={() => deleteAnswer(answer._id)}>Delete</button>
+                                </>
                             }
                          </div>
                     )) 
