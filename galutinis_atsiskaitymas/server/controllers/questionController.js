@@ -91,6 +91,11 @@ export const deleteQuestion = async (req, res) => {
         if (question.authorId !== userId) {
             return res.status(403).send({ error: 'You are not allowed to delete this question.' });
         }
+
+        await client
+            .db('Final_Project')
+            .collection('answers')
+            .deleteMany({ questionId: _id});
         const result = await client
             .db('Final_Project')
             .collection('questions')

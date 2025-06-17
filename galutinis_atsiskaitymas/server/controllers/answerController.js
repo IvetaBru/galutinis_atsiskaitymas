@@ -89,6 +89,14 @@ export const deleteAnswer = async (req, res) => {
             .collection('answers')
             .deleteOne({ _id });
 
+        await client
+            .db('Final_Project')
+            .collection('questions')
+            .updateOne(
+                { _id: req.params.questionId },
+                { $inc: { answersCount: -1 } }
+            );
+
         if(result.deletedCount){
             res.send({ success: `Answer with ID ${_id} was deleted successfully.` });
         }else{
