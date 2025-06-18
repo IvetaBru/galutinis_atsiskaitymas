@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useState, useEffect } from "react";
 import { Link } from "react-router";
 
 import { Question } from "../../../types";
@@ -13,10 +14,20 @@ const StyledDiv = styled.div`
 `
 
 const QuestionCard = ({ data }: Props) => {
-    
+
+    const [likesCount, setLikesCount] = useState(0);
+
+    useEffect(() => {
+    fetch(`http://localhost:5500/likes/count/${data._id}`)
+        .then(res => res.json())
+        .then(question => setLikesCount(question.likesCount))
+        .catch(console.error);
+    },[data._id]);
+
     return ( 
         <StyledDiv>
             <span>{new Date(data.createdAt).toLocaleDateString()}</span>
+            <span> Likes: {likesCount}</span>
             <p>{data.authorUsername}</p>
             <Link to={`/questions/${data._id}`}>
                 <h3>{data.title}</h3>
