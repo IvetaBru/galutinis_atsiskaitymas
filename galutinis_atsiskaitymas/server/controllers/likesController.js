@@ -69,3 +69,27 @@ export const getUserLikes = async (req, res) => {
         await client.close();
     }
 };
+
+export const getAllUserLikedQuestions = async (req, res) => {
+    const client = await connectDB();
+    try{
+        const userId = req.user._id;
+        const likedQuestions = await client
+            .db('Final_Project')
+            .collection('likes')
+            .find({ userId })
+            .toArray();
+        const questionIds = likedQuestions.map(q => q.questionId);
+        const questions = await client
+            .db('Final_Project')
+            .collection('questions')
+            .find({ _id: { $in: questionIds } })
+            .toArray();
+        res.send({ questions });
+    }catch(err){
+        console.error(err);
+        res.status(500).send({ error: err, message: `Something went wrong with server, please try again later.` });
+    }finally{
+        await client.close();
+    }
+};
