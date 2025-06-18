@@ -45,7 +45,7 @@ export type QuestionActionTypes =
     { type: 'updateAnswersCount'; questionId: string; change: number };
     
 export type QuestionsContextType = {
-    updateAnswersCount: (questionId: string, change: number) => void,
+    refetchQuestions: () => Promise<void>,
     questions: Question[],
     dispatch: React.ActionDispatch<[action: QuestionActionTypes]>,
     isLoading: boolean,

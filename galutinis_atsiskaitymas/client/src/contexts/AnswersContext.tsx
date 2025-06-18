@@ -29,7 +29,7 @@ const AnswersProvider = ({ children, questionId }: Props) => {
 
     const [ answers, dispatch ] = useReducer(reducer, []);
     const [ answerIsLoading, setAnswerIsLoading ] = useState(true);
-    const { updateAnswersCount } = useContext(QuestionsContext) as QuestionsContextType;
+    const { refetchQuestions } = useContext(QuestionsContext) as QuestionsContextType;
 
     const addNewAnswer = async (newAnswer: Pick<Answer, 'body'>) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
@@ -49,29 +49,32 @@ const AnswersProvider = ({ children, questionId }: Props) => {
             type: "addAnswer",
             newAnswer: data.newAnswer
         });
-        updateAnswersCount(questionId!, 1)
+        await refetchQuestions();
         return { success: data.success };
     };
 
-    const deleteAnswer = (_id: Answer['_id']) => {
+    const deleteAnswer = async (_id: Answer['_id']) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
         const confirm = window.confirm("Do you want to delete it?");
         if (!confirm) return;
     
-        fetch(`http://localhost:5500/questions/answers/${_id}`, {
+        const backResponse = await fetch(`http://localhost:5500/questions/answers/${_id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${accessJWT}`
             },
-        })
-        .then(() => {
-            dispatch({
-                type: "deleteAnswer",
-                _id
-            });
-            updateAnswersCount(questionId!, -1)
         });
+        if(!backResponse.ok){
+            const data = await backResponse.json();
+            return { error: data.error }
+        }
+        dispatch({
+            type: "deleteAnswer",
+            _id
+        });
+        await refetchQuestions();
     }
+
     const editAnswer = async (editedAnswer: Answer) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
         const backResponse = await fetch(`http://localhost:5500/questions/answers/${editedAnswer._id}`, {

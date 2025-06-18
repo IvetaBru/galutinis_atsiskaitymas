@@ -74,9 +74,9 @@ export const deleteAnswer = async (req, res) => {
             return res.status(401).send({error: 'Unauthorized. No user'});
         }
         const answer = await client
-        .db('Final_Project')
-        .collection('answers')
-        .findOne({ _id });
+            .db('Final_Project')
+            .collection('answers')
+            .findOne({ _id });
 
         if (!answer) {
             return res.status(404).send({ error: `No answer with ID ${_id}.` });
@@ -84,24 +84,24 @@ export const deleteAnswer = async (req, res) => {
         if (answer.authorId !== userId) {
             return res.status(403).send({ error: 'You are not allowed to delete this question.' });
         }
-        const result = await client
+        await client
             .db('Final_Project')
             .collection('answers')
             .deleteOne({ _id });
+
+        const newCount = await client
+            .db('Final_Project')
+            .collection('answers')
+            .countDocuments({ questionId: answer.questionId });
 
         await client
             .db('Final_Project')
             .collection('questions')
             .updateOne(
-                { _id: req.params.questionId },
-                { $inc: { answersCount: -1 } }
+                { _id: answer.questionId },
+                { $set: { answersCount: newCount } }
             );
-
-        if(result.deletedCount){
-            res.send({ success: `Answer with ID ${_id} was deleted successfully.` });
-        }else{
-            res.status(404).send({ error: `Failed to delete. No answer with ID ${_id}.` });
-        }
+        res.send({ success: `Answer with ID ${_id} was deleted successfully.` });
     }catch(err){
         console.log(err);
         res.status(500).send({ error: err.message, message: `Something went wrong with servers, please try again later.` });
