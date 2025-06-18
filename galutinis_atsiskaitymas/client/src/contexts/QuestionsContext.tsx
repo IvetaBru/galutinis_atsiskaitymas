@@ -27,6 +27,14 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
+    const refetchQuestions = async () => {
+        setIsLoading(true);
+        const res = await fetch("http://localhost:5500/questions");
+        const data = await res.json();
+        dispatch({ type: "setData", data });
+        setIsLoading(false);
+    };
+
     const addNewQuestion = async (newQuestion: Pick<Question, 'title' | 'body' | 'tags'>) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
         const backResponse = await fetch(`http://localhost:5500/questions`, {
@@ -106,6 +114,7 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     return(
         <QuestionsContext.Provider
             value={{
+                refetchQuestions,
                 questions,
                 dispatch,
                 isLoading,

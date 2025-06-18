@@ -8,6 +8,7 @@ import UsersContext from "../../../contexts/UsersContext";
 import EditingQuestion from "../molecules/EditingQuestion";
 import AnswersContext from "../../../contexts/AnswersContext";
 import AnswerInput from "../molecules/AnswerInput";
+import EditingAnswer from "../molecules/EditingAnswer";
 
 const StyledSection = styled.section`
     
@@ -17,11 +18,12 @@ const SpecificQuestionContent = () => {
 
     const {_id} = useParams();
     const { questions, isLoading, deleteQuestion } = useContext(QuestionsContext) as QuestionsContextType;
-    const { answers, answerIsLoading } = useContext(AnswersContext) as AnswersContextType;
+    const { answers, answerIsLoading, deleteAnswer } = useContext(AnswersContext) as AnswersContextType;
     const { loggedInUser } = useContext(UsersContext) as UserContextType;
 
     const [ question, setQuestion ] = useState<Question | null>(null);
     const [ isEditing, setIsEditing ] = useState(false);
+    const [editingAnswerId, setEditingAnswerId] = useState<string | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     
     useEffect(() => {
@@ -29,20 +31,20 @@ const SpecificQuestionContent = () => {
             const found = questions.find(q => q._id === _id);
             setQuestion(found || null);
         }
-    }, [_id, questions, isLoading])
+    }, [_id, questions, isLoading]);
 
     return ( 
         <StyledSection>
             <div>
                 {
-                    question && question.authorId === loggedInUser?._id && 
+                    question && question.authorId === loggedInUser?._id && (
                     <>
                         <button onClick={() => deleteQuestion(question._id)}>Delete</button>
                         <button onClick={() => setIsEditing((prev) => !prev)}>
                             {isEditing ? "Cancel" : "Edit"}
                         </button>
                     </>
-                }
+                )}
                 {
                     isLoading ? <p>Data is loading...</p> :
                     !question ? <p>Question not found</p> :
@@ -66,30 +68,50 @@ const SpecificQuestionContent = () => {
             </div>
             <div>
                 {
-                    loggedInUser &&
-                    <button onClick={() => setIsOpen(true)}>Answer</button>
-                }
+                    loggedInUser && (
+                        <button onClick={() => setIsOpen(true)}>Answer</button>
+                )}
                 <AnswerInput isOpen={isOpen} onClose={() => setIsOpen(false)}/>
                 {
-                    answerIsLoading ? <p>Answers are loading...</p> :
+                    answerIsLoading ? (<p>Answers are loading...</p>) :
                     answers.length > 0 ? (
-                    answers.map( answer => (
-                        <div key={answer._id}>
-                            <span>{new Date(answer.createdAt).toLocaleDateString()}</span>
-                            <p>{answer.authorUsername}</p>
-                            <p>{answer.body}</p>
-                            {
-                                answer.isEdited && (
-                                    <span>Edited {new Date (answer.updatedAt).toLocaleDateString()}</span>
-                                )
-                            }
-                         </div>
-                    )) 
-                    ) : (<p>No answers yet</p>)
-                 }
+                            answers.map(answer => (
+                                <div key={answer._id}>
+                                {
+                                    editingAnswerId && editingAnswerId === answer._id ? (
+                                        <EditingAnswer
+                                        answer={answer}
+                                        onClose={() => setEditingAnswerId (null)}
+                                    />
+                                ) : (
+                                    <>
+                                        <span>{new Date(answer.createdAt).toLocaleDateString()}</span>
+                                        {
+                                            answer.isEdited && (
+                                                <span>Edited {new Date(answer.updatedAt).toLocaleDateString()}</span>
+                                        )}
+                                        <p>{answer.authorUsername}</p>
+                                        <p>{answer.body}</p>
+                                        {
+                                            answer.authorId === loggedInUser?._id && (
+                                                <>
+                                                    <button onClick={() => deleteAnswer(answer._id)}>Delete</button>
+                                                    {
+                                                    editingAnswerId !== answer._id && (
+                                                        <button onClick={() => setEditingAnswerId(answer._id)}>Edit</button>
+                                                    )}
+                                                </>
+                                            )
+                                        }
+                                    </>
+                                )}
+                            </div>
+                            ))
+                        ) : (<p>No answers yet</p>)
+                    }
             </div>
         </StyledSection>
-     );
+    );
 }
  
 export default SpecificQuestionContent;

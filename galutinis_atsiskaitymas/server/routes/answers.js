@@ -12,9 +12,9 @@ router.get('/:questionId/answers', getAnswersForQuestion);
 router.post('/:questionId/answers', verifyJWT, addAnswerToQuestion);
 
 //delete answer
-router.delete('/:_id', verifyJWT, deleteAnswer);
+router.delete('/answers/:_id', verifyJWT, deleteAnswer);
 
 //edit answer
-router.patch('/:_id', verifyJWT, editAnswer);
+router.patch('/answers/:_id', verifyJWT, editAnswer);
 
 export default router;
