@@ -47,6 +47,8 @@ export type QuestionActionTypes =
     { type: 'updateAnswersCount'; questionId: string; change: number };
     
 export type QuestionsContextType = {
+    changeSort: (sortValue: string) => void,
+    changeFilter: (filterValue: string) => void,
     refetchQuestions: () => Promise<void>,
     questions: Question[],
     dispatch: React.ActionDispatch<[action: QuestionActionTypes]>,

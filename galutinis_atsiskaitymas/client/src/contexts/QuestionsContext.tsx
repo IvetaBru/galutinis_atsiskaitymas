@@ -1,4 +1,4 @@
-import { createContext, useEffect, useReducer, useState } from "react";
+import { createContext, useEffect, useReducer, useRef, useState } from "react";
 
 import { Question, ChildrenElementProp, QuestionActionTypes, QuestionsContextType } from "../types";
 import { useNavigate } from "react-router";
@@ -8,7 +8,7 @@ const reducer = (state: Question[], action: QuestionActionTypes): Question[] => 
         case 'setData':
             return action.data;
         case 'addQuestion':
-            return [...state, action.newQuestion];
+            return [action.newQuestion, ...state];
         case 'deleteQuestion':
             return state.filter(q => q._id !== action._id);
         case 'editQuestion':
@@ -27,12 +27,36 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
+    const sort = useRef('sort_createdAt=-1');
+    const filter = useRef('');
+
+    const fetchData = async () => {
+    setIsLoading(true);
+        fetch(`http://localhost:5500/questions?&${sort.current}&${filter.current}`)
+          .then(res => res.json())
+          .then(data => {
+            dispatch({
+              type: 'setData',
+              data
+            });
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+    }
+
+    const changeSort = (sortValue: string) => {
+        sort.current = sortValue;
+        fetchData(); 
+    }
+
+    const changeFilter = (filterValue: string) => {
+        filter.current = filterValue;
+        fetchData(); 
+    }
+
     const refetchQuestions = async () => {
-        setIsLoading(true);
-        const res = await fetch("http://localhost:5500/questions");
-        const data = await res.json();
-        dispatch({ type: "setData", data });
-        setIsLoading(false);
+        await fetchData();
     };
 
     const addNewQuestion = async (newQuestion: Pick<Question, 'title' | 'body' | 'tags'>) => {
@@ -99,21 +123,14 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     }
 
     useEffect(() => {
-        setIsLoading(true);
-        fetch(`http://localhost:5500/questions`)
-            .then(res => res.json())
-            .then((data: Question[]) => {
-                dispatch({
-                    type: "setData",
-                    data
-                });
-                setIsLoading(false);
-            });
-    }, []);
+        fetchData();
+    }, [sort, filter]);
 
     return(
         <QuestionsContext.Provider
             value={{
+                changeSort,
+                changeFilter,
                 refetchQuestions,
                 questions,
                 dispatch,

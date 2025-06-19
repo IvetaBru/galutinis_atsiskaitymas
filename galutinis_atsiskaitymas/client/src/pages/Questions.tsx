@@ -6,6 +6,7 @@ import QuestionsContext from "../contexts/QuestionsContext";
 import UsersContext from "../contexts/UsersContext";
 import { QuestionsContextType, UserContextType } from "../types";
 import QuestionCard from "../components/UI/molecules/QuestionCard";
+import QuestionsSort from "../components/UI/molecules/QuestionsSort";
 
 const StyledSection = styled.section`
     
@@ -25,6 +26,7 @@ const Questions = () => {
                 <Link to={'/questions/ask'}><button>Ask Question</button></Link> :
                 <Link to={'/login'}><button>Ask Question</button></Link>
             }
+            <QuestionsSort/>
             <div>
                 {
                     !isLoading && isEmpty && (
