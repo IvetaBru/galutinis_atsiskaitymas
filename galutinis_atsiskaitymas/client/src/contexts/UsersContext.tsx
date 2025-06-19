@@ -12,7 +12,7 @@ const reducer = (state: Omit<User, 'password'> | null, action: UserContextReduce
         case 'editUser':
             return state ? {
                 ...state,
-                [action.key] : action.newValue
+                ...action.user
             } : state;
     }
 }
@@ -22,8 +22,6 @@ const UsersProvider = ({ children } : ChildrenElementProp) => {
 
     const [loggedInUser, dispatch] = useReducer(reducer, null);
     const navigate = useNavigate();
-
-    // type BackLoginResponse = { error: string } | { success: string, userData: Omit<User, 'password'> };
 
     const login = async (loginInfo: Pick<User, 'username' | 'password'>, keepLoggedIn: boolean) => {
         try{
@@ -89,6 +87,28 @@ const UsersProvider = ({ children } : ChildrenElementProp) => {
         return { success: Back_Response.success }
     }
 
+    const editUserInfo = async (editedUser: User) => {
+        const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
+        const backResponse = await fetch(`http://localhost:5500/users/editInfo`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type":"application/json",
+                Authorization: `Bearer ${accessJWT}`
+            },
+            body: JSON.stringify(editedUser)
+        })
+        const data = await backResponse.json();
+
+        if ('error' in data){
+            return { error: data.error };
+        }
+        dispatch({
+            type: "setUser",
+            user: data.user
+        });
+        return { success: data.success };
+    }
+
     useEffect(() => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
         if(accessJWT){
@@ -119,7 +139,8 @@ const UsersProvider = ({ children } : ChildrenElementProp) => {
                 loggedInUser,
                 login,
                 logOut,
-                register
+                register,
+                editUserInfo
             }}
         >
             { children }
