@@ -3,6 +3,7 @@ import { Link } from "react-router";
 
 import UsersContext from "../contexts/UsersContext";
 import { UserContextType, Question } from "../types";
+import EditingUserInfo from "../components/UI/molecules/EditingUserInfo";
 
 
 const UserInfo = () => {
@@ -12,6 +13,8 @@ const UserInfo = () => {
     const [loading, setLoading] = useState(true);
     const accessJWT = localStorage.getItem("accessJWT") || sessionStorage.getItem("accessJWT");
    
+    const [ isEditing, setIsEditing ] = useState(false);
+
     useEffect(() => {
         if (!accessJWT) {
         setLoading(false);
@@ -47,6 +50,17 @@ const UserInfo = () => {
         <section>
                 <h2>Hello, {loggedInUser.fullName}!</h2>
                 <h3>Profile information</h3>
+                {
+                    loggedInUser && (
+                    <button onClick={() => setIsEditing((prev) => !prev)}>
+                        {isEditing ? "Cancel" : "Edit"}
+                    </button>)
+                }
+                {
+                    isEditing && loggedInUser && (
+                        <EditingUserInfo user={loggedInUser} onClose={() => setIsEditing(false)}/>
+                    )
+                }
             <div>
                 <p>Username: {loggedInUser.username}</p>
                 <p>Email: {loggedInUser.email}</p>

@@ -33,13 +33,26 @@ export const loginAuto = async (req, res) => {
     const accessToken = authHeader.split(' ')[1];
     const verifyResults = await validateJWT(accessToken);
     if('error' in verifyResults){
-        //res su error message(turi fronte neprijungti - navigate į login)
         res.status(400).send(verifyResults);
-    }else{
-        //res su body, kur yra decoded info ir fronte vartotojas automatiškai prijungiamas
-        res.send(verifyResults);
     }
-}
+    const client = await connectDB();
+    try {
+        const user = await client
+            .db('Final_Project')
+            .collection('users')
+            .findOne({ _id: verifyResults._id });
+
+        if (!user) {
+            return res.status(404).send({ error: "User not found" });
+        }
+        const { password, ...safeUser } = user;
+        res.send(safeUser);
+    }catch(err){
+        res.status(500).send({ error: err, message: 'Something went wrong with server, please try again later'});
+    }finally{
+        await client.close();
+    }
+};
 
 export const register = async (req, res) => {
     const client = await connectDB();
@@ -73,3 +86,45 @@ export const register = async (req, res) => {
         await client.close();
     }
 };
+
+export const editUserInfo = async (req, res) => {
+    const client = await connectDB();
+    try{
+        const { _id, username, email, fullName, avatar } = req.body;
+        if (!_id) {
+            return res.status(400).send({ error: "_id is required" });
+        }       
+        const existingInfo = await client
+            .db('Final_Project')
+            .collection('users')
+            .findOne({ _id });
+        if(!existingInfo){
+           return res.status(404).send({ error: 'Profile not found' }); 
+        }
+        if (existingInfo._id !== req.user._id) {
+            return res.status(403).send({ error: 'You can only edit your own profile' });
+        }
+        const updatedFields = { _id, username, email, fullName, avatar };
+        await client
+            .db('Final_Project')
+            .collection('users')
+            .updateOne(
+                {_id},
+                {$set: updatedFields}
+            );
+        // if (result.modifiedCount === 0) {
+        //     return res.status(400).send({ error: 'No changes were made' });
+        // }
+        const updatedUser = await client
+            .db('Final_Project')
+            .collection('users')
+            .findOne({ _id });
+        const { password, ...safeUser } = updatedUser;
+        res.send({ success: 'Profile updated successfully', user: safeUser });
+    }catch(err){
+        console.log(err);
+        res.status(500).send({ error: err.message, message: `Something went wrong with servers, please try again later.` });
+    }finally{
+        await client.close();
+    }
+}

@@ -1,6 +1,7 @@
 import { Router } from "express";
 
-import { login, loginAuto, register } from "../controllers/userController.js";
+import { verifyJWT } from '../middleware/auth.js';
+import { login, loginAuto, register, editUserInfo } from "../controllers/userController.js";
 
 const router = Router();
 
@@ -12,5 +13,8 @@ router.get('/loginAuto', loginAuto);
 
 //Register
 router.post('/register', register);
+
+//Edit user info
+router.patch('/editInfo', verifyJWT, editUserInfo);
 
 export default router;

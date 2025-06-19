@@ -6,7 +6,7 @@ export type User = {
     username: string,
     fullName: string,
     email: string,
-    password: string,
+    password?: string,
     passwordRepeat?: string,
     avatar: string,
     createdAt: string
@@ -15,13 +15,14 @@ export type User = {
 export type UserContextReducerActions = 
     { type: 'setUser', user: Omit<User, 'password'> } |
     { type: 'logUserOut' } |
-    { type: 'editUser', key: keyof Omit<User, 'password'|'_id'>, newValue: string | number };
+    { type: 'editUser', user: Omit<User, 'password'>};
 
 export type UserContextType = {
     loggedInUser: Omit<User, "password"> | null,
     login: ({ username, password }: Pick<User, "username" | "password">, keepLoggedIn: boolean) => Promise<{ error: string } | { success: string }>,
     logOut: () => void,
     register: (registerInfo: Omit<User, "_id">) => Promise<{ error: string} | {success: string}>
+    editUserInfo: (editedUser: User) => Promise<{error: string} | {success: string}>
 };
 
 export type Question = {
