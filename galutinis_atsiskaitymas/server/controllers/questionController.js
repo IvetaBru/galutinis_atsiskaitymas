@@ -21,7 +21,11 @@ const dynamicQuery = (reqQuery) => {
                 }else if(field === 'title'){
                     settings.filter[field] = { $regex: new RegExp(value, 'i') };
                 }else if(field === 'tags'){
-                    settings.filter[field] = { $in: [value] };                
+                    if(Array.isArray(value)){
+                        settings.filter[field] = { $in: value };                 
+                    }else{
+                        settings.filter[field] = { $in: [value] };                 
+                    }
                 }else{
                     settings.filter[field] = { $regex: new RegExp(value, 'i') };                    
                 }
