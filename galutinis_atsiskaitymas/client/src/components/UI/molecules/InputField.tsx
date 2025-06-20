@@ -28,6 +28,9 @@ const StyledInput = styled.div`
         }
     }
     .errors{
+        margin: 0;
+        padding-bottom: 5px;
+        font-size: 13px;
         color: var(--color-secondary);
     }
 `

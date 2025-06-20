@@ -9,7 +9,7 @@ export type User = {
     password?: string,
     passwordRepeat?: string,
     avatar: string,
-    createdAt: string
+    createdAt?: string
 };
 
 export type UserContextReducerActions = 

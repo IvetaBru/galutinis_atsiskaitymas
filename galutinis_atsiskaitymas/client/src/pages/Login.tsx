@@ -35,6 +35,11 @@ const StyledSection = styled.section`
             font-size: 40px;
             padding-bottom: 20px;
         };
+        >p{
+            margin: 0;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
     }
     .button{
         margin: 20px;
@@ -138,6 +143,7 @@ const Login = () => {
                     <label htmlFor="keepSignedIn">Keep me signed in</label>
                 </div>
                 <p>Don't have an account yet? Go <Link to="/register" className='link'>create</Link> one!</p>
+                <Link to="/questions" className="link">I just want to read the forum</Link>
                 {
                     afterLoginMessage && <p className='message'>{afterLoginMessage}</p>
                 }
