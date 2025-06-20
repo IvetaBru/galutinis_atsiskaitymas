@@ -8,6 +8,8 @@ import { QuestionsContextType, UserContextType } from "../types";
 import QuestionCard from "../components/UI/molecules/QuestionCard";
 import QuestionsSort from "../components/UI/molecules/QuestionsSort";
 import QuestionsFilter from "../components/UI/molecules/QuestionsFilter";
+import Pagination from "../components/UI/molecules/Pagination";
+import PageSize from "../components/UI/atoms/PageSize";
 
 const StyledSection = styled.section`
     
@@ -29,6 +31,7 @@ const Questions = () => {
             }
             <QuestionsSort/>
             <QuestionsFilter/>
+            <PageSize />
             <div>
                 {
                     !isLoading && isEmpty && (
@@ -43,7 +46,8 @@ const Questions = () => {
                         />
                     ))
                 }
-            </div>    
+            </div>  
+            <Pagination />  
         </StyledSection>
      );
 }

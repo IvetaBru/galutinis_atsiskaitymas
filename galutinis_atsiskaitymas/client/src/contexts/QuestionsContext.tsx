@@ -29,10 +29,45 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
 
     const sort = useRef('sort_createdAt=-1');
     const filter = useRef('');
+    const [pageSize, setPageSize] = useState(2);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [filteredDataAmount, setFilteredDataAmount] = useState(0);
+
+    const changePageSize = (size: number) => {
+        setPageSize(size);
+        setCurrentPage(1);
+        getFilteredDataAmount();
+    }
+    
+    const changePage = (newPage: number) => {
+        setCurrentPage(newPage);
+    }
+    
+    const changeSort = (sortValue: string) => {
+        sort.current = sortValue;
+        setCurrentPage(1);
+        getFilteredDataAmount();
+        fetchData(); 
+    }
+    
+    const changeFilter = (filterValue: string) => {
+        filter.current = filterValue;
+        fetchData(); 
+    }
+
+    const getFilteredDataAmount = () => {
+        fetch(`http://localhost:5500/questions/getCount?${filter.current}`)
+        .then(res => res.json())
+        .then(data => {
+            setFilteredDataAmount(data.totalAmount);
+        });
+    }
 
     const fetchData = async () => {
     setIsLoading(true);
-        fetch(`http://localhost:5500/questions?&${sort.current}&${filter.current}`)
+    const skip = (currentPage - 1) * pageSize;
+    const query = `skip=${skip}&limit=${pageSize}&${sort.current}&${filter.current}`;
+        fetch(`http://localhost:5500/questions?${query}`)
           .then(res => res.json())
           .then(data => {
             dispatch({
@@ -43,16 +78,6 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
           .finally(() => {
             setIsLoading(false);
           });
-    }
-
-    const changeSort = (sortValue: string) => {
-        sort.current = sortValue;
-        fetchData(); 
-    }
-
-    const changeFilter = (filterValue: string) => {
-        filter.current = filterValue;
-        fetchData(); 
     }
 
     const refetchQuestions = async () => {
@@ -123,14 +148,26 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     }
 
     useEffect(() => {
+    fetchData();
+    getFilteredDataAmount();
+    }, [pageSize, currentPage]);
+
+    useEffect(() => {
+        setCurrentPage(1);
         fetchData();
-    }, [sort, filter]);
+        getFilteredDataAmount();
+    }, [filter.current, sort.current]);
 
     return(
         <QuestionsContext.Provider
             value={{
+                changePageSize,
+                changePage,
+                currentPage,
+                pageSize,
                 changeSort,
                 changeFilter,
+                filteredDataAmount,
                 refetchQuestions,
                 questions,
                 dispatch,
