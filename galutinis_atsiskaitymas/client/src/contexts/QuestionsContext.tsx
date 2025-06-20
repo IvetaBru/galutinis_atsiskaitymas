@@ -1,4 +1,4 @@
-import { createContext, useEffect, useReducer, useState } from "react";
+import { createContext, useEffect, useReducer, useRef, useState } from "react";
 
 import { Question, ChildrenElementProp, QuestionActionTypes, QuestionsContextType } from "../types";
 import { useNavigate } from "react-router";
@@ -8,7 +8,7 @@ const reducer = (state: Question[], action: QuestionActionTypes): Question[] => 
         case 'setData':
             return action.data;
         case 'addQuestion':
-            return [...state, action.newQuestion];
+            return [action.newQuestion, ...state];
         case 'deleteQuestion':
             return state.filter(q => q._id !== action._id);
         case 'editQuestion':
@@ -27,12 +27,61 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
+    const sort = useRef('sort_createdAt=-1');
+    const filter = useRef('');
+    const [pageSize, setPageSize] = useState(2);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [filteredDataAmount, setFilteredDataAmount] = useState(0);
+
+    const changePageSize = (size: number) => {
+        setPageSize(size);
+        setCurrentPage(1);
+        getFilteredDataAmount();
+    }
+    
+    const changePage = (newPage: number) => {
+        setCurrentPage(newPage);
+    }
+    
+    const changeSort = (sortValue: string) => {
+        sort.current = sortValue;
+        setCurrentPage(1);
+        getFilteredDataAmount();
+        fetchData(); 
+    }
+    
+    const changeFilter = (filterValue: string) => {
+        filter.current = filterValue;
+        fetchData(); 
+    }
+
+    const getFilteredDataAmount = () => {
+        fetch(`http://localhost:5500/questions/getCount?${filter.current}`)
+        .then(res => res.json())
+        .then(data => {
+            setFilteredDataAmount(data.totalAmount);
+        });
+    }
+
+    const fetchData = async () => {
+    setIsLoading(true);
+    const skip = (currentPage - 1) * pageSize;
+    const query = `skip=${skip}&limit=${pageSize}&${sort.current}&${filter.current}`;
+        fetch(`http://localhost:5500/questions?${query}`)
+          .then(res => res.json())
+          .then(data => {
+            dispatch({
+              type: 'setData',
+              data
+            });
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+    }
+
     const refetchQuestions = async () => {
-        setIsLoading(true);
-        const res = await fetch("http://localhost:5500/questions");
-        const data = await res.json();
-        dispatch({ type: "setData", data });
-        setIsLoading(false);
+        await fetchData();
     };
 
     const addNewQuestion = async (newQuestion: Pick<Question, 'title' | 'body' | 'tags'>) => {
@@ -99,21 +148,26 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     }
 
     useEffect(() => {
-        setIsLoading(true);
-        fetch(`http://localhost:5500/questions`)
-            .then(res => res.json())
-            .then((data: Question[]) => {
-                dispatch({
-                    type: "setData",
-                    data
-                });
-                setIsLoading(false);
-            });
-    }, []);
+    fetchData();
+    getFilteredDataAmount();
+    }, [pageSize, currentPage]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+        fetchData();
+        getFilteredDataAmount();
+    }, [filter.current, sort.current]);
 
     return(
         <QuestionsContext.Provider
             value={{
+                changePageSize,
+                changePage,
+                currentPage,
+                pageSize,
+                changeSort,
+                changeFilter,
+                filteredDataAmount,
                 refetchQuestions,
                 questions,
                 dispatch,

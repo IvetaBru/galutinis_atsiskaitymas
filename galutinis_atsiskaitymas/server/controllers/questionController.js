@@ -2,16 +2,69 @@ import { v4 as generateID } from 'uuid';
 
 import { connectDB } from './helper.js';
 
+const dynamicQuery = (reqQuery) => {
+    const settings = {
+        filter: {},
+        sort: {},
+        skip: 0,
+        limit: 20
+    }
+    for (const key in reqQuery) {
+        const [action, field, operator] = key.split('_');
+        const value = reqQuery[key];
+        
+        if(action === 'sort') {
+            settings.sort[field] = Number(value);
+            settings.sort._id = 1;
+        }else if(action === 'skip'){
+          settings.skip = Number(reqQuery[key]);
+        }else if(action === 'limit'){
+          settings.limit = Number(reqQuery[key]);
+        }else if(action === 'filter'){
+            if(!operator){
+                if(field === 'isAnswered'){
+                    settings.filter[field] = value === 'true';
+                }else if(field === 'title'){
+                    settings.filter[field] = { $regex: new RegExp(value, 'i') };
+                }else if(field === 'tags'){
+                    if(Array.isArray(value)){
+                        settings.filter[field] = { $in: value };                 
+                    }else{
+                        settings.filter[field] = { $in: [value] };                 
+                    }
+                }else{
+                    settings.filter[field] = { $regex: new RegExp(value, 'i') };                    
+                }
+            }else{
+                const $operator = '$' + operator;
+                if(!settings.filter[field]){
+                    settings.filter[field] = { [$operator]: Number(value) };
+                }else{
+                    settings.filter[field][$operator] = Number(value);
+                }
+            }        
+        }
+    }
+    return settings;
+};
+
 export const getAllQuestions = async (req, res) => {
     const client = await connectDB();
     try{
+        const settings = dynamicQuery(req.query);
         const questions = await client
             .db('Final_Project')
             .collection('questions')
-            .find()
-            .sort()
+            .find(settings.filter)
+            .sort(settings.sort)
+            .skip(settings.skip)
+            .limit(settings.limit)
             .toArray();
-        const users = await client.db('Final_Project').collection('users').find().toArray();
+        const users = await client
+            .db('Final_Project')
+            .collection('users')
+            .find()
+            .toArray();
         const usersMap = Object.fromEntries(users.map(user => [user._id, user.username])); 
         const questionsWithAuthor = questions.map(q => ({...q, authorUsername: usersMap[q.authorId] || 'Unknown'}));
         res.send(questionsWithAuthor);   
@@ -22,6 +75,28 @@ export const getAllQuestions = async (req, res) => {
         await client.close();
     }
 };
+
+export const getQuestionsAmount = async (req, res) => {
+    const client = await connectDB();
+    try{
+        const settings = dynamicQuery(req.query);
+        const backResponse = await client
+            .db('Final_Project')
+            .collection('questions')
+            .aggregate([
+                {$match: settings.filter},
+                {$count: 'count'}
+            ])
+            .toArray();
+        const count = Array.isArray(backResponse) && backResponse.length > 0 ? backResponse[0].count : 0;
+        res.send({ totalAmount: count });
+    }catch(err){
+        console.error(err);
+        res.status(500).send({ error: err, message: `Something went wrong with server, please try again later.` });
+    }finally{
+        await client.close();
+    }
+}
 
 export const getSpecQuestion = async (req, res) => {
     const client = await connectDB();

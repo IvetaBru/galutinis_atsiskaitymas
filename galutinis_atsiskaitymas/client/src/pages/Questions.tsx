@@ -6,6 +6,10 @@ import QuestionsContext from "../contexts/QuestionsContext";
 import UsersContext from "../contexts/UsersContext";
 import { QuestionsContextType, UserContextType } from "../types";
 import QuestionCard from "../components/UI/molecules/QuestionCard";
+import QuestionsSort from "../components/UI/molecules/QuestionsSort";
+import QuestionsFilter from "../components/UI/molecules/QuestionsFilter";
+import Pagination from "../components/UI/molecules/Pagination";
+import PageSize from "../components/UI/atoms/PageSize";
 
 const StyledSection = styled.section`
     
@@ -25,6 +29,9 @@ const Questions = () => {
                 <Link to={'/questions/ask'}><button>Ask Question</button></Link> :
                 <Link to={'/login'}><button>Ask Question</button></Link>
             }
+            <QuestionsSort/>
+            <QuestionsFilter/>
+            <PageSize />
             <div>
                 {
                     !isLoading && isEmpty && (
@@ -39,7 +46,8 @@ const Questions = () => {
                         />
                     ))
                 }
-            </div>    
+            </div>  
+            <Pagination />  
         </StyledSection>
      );
 }

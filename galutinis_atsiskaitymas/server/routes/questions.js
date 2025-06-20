@@ -1,12 +1,15 @@
 import { Router } from 'express';
 
 import { verifyJWT } from '../middleware/auth.js';
-import { addNewQuestion, deleteQuestion, editQuestion, getAllQuestions, getSpecQuestion } from '../controllers/questionController.js';
+import { addNewQuestion, deleteQuestion, editQuestion, getAllQuestions, getQuestionsAmount, getSpecQuestion } from '../controllers/questionController.js';
 
 const router = Router();
 
 //get all questions
 router.get('', getAllQuestions);
+
+//get questions amount
+router.get('/getCount', getQuestionsAmount);
 
 //get single question
 router.get('/:_id', getSpecQuestion);
