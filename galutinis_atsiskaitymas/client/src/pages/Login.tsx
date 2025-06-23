@@ -9,7 +9,63 @@ import UsersContext from '../contexts/UsersContext';
 import { User, UserContextType } from '../types';
 
 const StyledSection = styled.section`
-    
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(to bottom, var(--color-primary), var(--color-secondary));
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    >div{
+        background-color: #ffffff19;
+        backdrop-filter: blur(10px);
+        border-radius: 40px;
+        padding: 50px 30px;
+        width: 380px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-weight: 600;
+        >h2{
+            margin: 0;
+            font-size: 40px;
+            padding-bottom: 20px;
+        };
+        >p{
+            margin: 0;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+    }
+    .button{
+        margin: 20px;
+        padding: 5px 15px;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        font-family: "Nunito", sans-serif;
+        color: var(--color-darkest);
+        background-color: var(--color-background);
+    }
+    .button:hover{
+        background-color: var(--color-accent);
+        transition: 0.3s;
+    }
+    .link{
+        text-decoration: none;
+        color: var(--color-accent)
+    }
+    .link:hover{
+        color: var(--color-background);
+    }
+    .message{
+        color: var(--color-accentText);
+    }
 `
 
 const Login = () => {
@@ -49,46 +105,49 @@ const Login = () => {
 
     return ( 
         <StyledSection>
-            <h2>Login</h2>
-            <form onSubmit={formik.handleSubmit}>
-                <InputField 
-                inputName="username"
-                inputId="username"
-                inputType="text"
-                labelText="Username:"
-                inputValue={formik.values.username}
-                errors={formik.errors.username}
-                touched={formik.touched.username}
-                inputOnBlur={formik.handleBlur}
-                inputOnChange={formik.handleChange}
-                />
-                <InputField 
-                inputName="password"
-                inputId="password"
-                inputType="password"
-                labelText="Password:"
-                inputValue={formik.values.password}
-                errors={formik.errors.password}
-                touched={formik.touched.password}
-                inputOnBlur={formik.handleBlur}
-                inputOnChange={formik.handleChange}
-                />
-                <input type="submit" value="Login" />
-            </form>
             <div>
-                <input
-                    type="checkbox"
-                    name="keepSignedIn" id="keepSignedIn"
-                    onChange={() => {
-                        setKeepLoggedIn(!keepLoggedIn);
-                    }}
-                />
-                <label htmlFor="keepSignedIn">Keep me signed in</label>
+                <h2>Login</h2>
+                <form onSubmit={formik.handleSubmit}>
+                    <InputField 
+                    inputName="username"
+                    inputId="username"
+                    inputType="text"
+                    labelText="Username:"
+                    inputValue={formik.values.username}
+                    errors={formik.errors.username}
+                    touched={formik.touched.username}
+                    inputOnBlur={formik.handleBlur}
+                    inputOnChange={formik.handleChange}
+                    />
+                    <InputField 
+                    inputName="password"
+                    inputId="password"
+                    inputType="password"
+                    labelText="Password:"
+                    inputValue={formik.values.password ?? ''}
+                    errors={formik.errors.password}
+                    touched={formik.touched.password}
+                    inputOnBlur={formik.handleBlur}
+                    inputOnChange={formik.handleChange}
+                    />
+                    <input type="submit" value="Login" className='button'/>
+                </form>
+                <div>
+                    <input
+                        type="checkbox"
+                        name="keepSignedIn" id="keepSignedIn"
+                        onChange={() => {
+                            setKeepLoggedIn(!keepLoggedIn);
+                        }}
+                    />
+                    <label htmlFor="keepSignedIn">Keep me signed in</label>
+                </div>
+                <p>Don't have an account yet? Go <Link to="/register" className='link'>create</Link> one!</p>
+                <Link to="/questions" className="link">I just want to read the forum</Link>
+                {
+                    afterLoginMessage && <p className='message'>{afterLoginMessage}</p>
+                }
             </div>
-            {
-                afterLoginMessage && <p>{afterLoginMessage}</p>
-            }
-            <p>Don't have an account yet? Go <Link to="/register">create</Link> one!</p>
         </StyledSection>
     );
 }

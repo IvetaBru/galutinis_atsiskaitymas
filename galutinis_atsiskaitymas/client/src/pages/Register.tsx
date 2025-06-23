@@ -9,6 +9,64 @@ import UsersContext from "../contexts/UsersContext";
 import { User, UserContextType } from "../types";
 
 const StyledSection = styled.section`
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(to bottom, var(--color-primary), var(--color-secondary));
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    >div{
+        background-color: #ffffff19;
+        backdrop-filter: blur(10px);
+        border-radius: 40px;
+        padding: 50px 30px;
+        width: 380px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-weight: 600;
+        max-height: 90vh;
+        >h2{
+            margin: 0;
+            font-size: 40px;
+            padding-bottom: 20px;
+        };
+        >p{
+            margin: 0;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+    }
+    .button{
+        margin: 20px;
+        padding: 5px 15px;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        font-family: "Nunito", sans-serif;
+        color: var(--color-darkest);
+        background-color: var(--color-background);
+    }
+    .button:hover{
+        background-color: var(--color-accent);
+        transition: 0.3s;
+    }
+    .link{
+        text-decoration: none;
+        color: var(--color-accent)
+    }
+    .link:hover{
+        color: var(--color-background);
+    }
+    .message{
+        color: var(--color-accentText);
+    }
     
 `
 
@@ -69,80 +127,83 @@ const Register = () => {
 
     return ( 
         <StyledSection>
-            <h2>Register</h2>
-            <form onSubmit={formik.handleSubmit}>
-                <InputField
-                    inputName="username"
-                    inputId="username"
-                    inputType="text"
-                    labelText="Username:"
-                    inputValue={formik.values.username}
-                    errors={formik.errors.username}
-                    touched={formik.touched.username}
-                    inputOnBlur={formik.handleBlur}
-                    inputOnChange={formik.handleChange}
-                />
-                <InputField
-                    inputName="fullName"
-                    inputId="fullName"
-                    inputType="text"
-                    labelText="Name and surname:"
-                    inputValue={formik.values.fullName}
-                    errors={formik.errors.fullName}
-                    touched={formik.touched.fullName}
-                    inputOnBlur={formik.handleBlur}
-                    inputOnChange={formik.handleChange}
-                />
-                <InputField
-                    inputName="email"
-                    inputId="email"
-                    inputType="email"
-                    labelText="Email:"
-                    inputValue={formik.values.email}
-                    errors={formik.errors.email}
-                    touched={formik.touched.email}
-                    inputOnBlur={formik.handleBlur}
-                    inputOnChange={formik.handleChange}
-                />
-                <InputField
-                    inputName="password"
-                    inputId="password"
-                    inputType="password"
-                    labelText="Password:"
-                    inputValue={formik.values.password}
-                    errors={formik.errors.password}
-                    touched={formik.touched.password}
-                    inputOnBlur={formik.handleBlur}
-                    inputOnChange={formik.handleChange}
-                />
-                <InputField
-                    inputName="passwordRepeat"
-                    inputId="passwordRepeat"
-                    inputType="password"
-                    labelText="Repeat password:"
-                    inputValue={formik.values.passwordRepeat ?? ''}
-                    errors={formik.errors.passwordRepeat}
-                    touched={formik.touched.passwordRepeat}
-                    inputOnBlur={formik.handleBlur}
-                    inputOnChange={formik.handleChange}
-                />
-                <InputField
-                    inputName="avatar"
-                    inputId="avatar"
-                    inputType="url"
-                    labelText="Profile picture:"
-                    inputValue={formik.values.avatar}
-                    errors={formik.errors.avatar}
-                    touched={formik.touched.avatar}
-                    inputOnBlur={formik.handleBlur}
-                    inputOnChange={formik.handleChange}
-                />
-                <input type="submit" value="Register" />
-            </form>
-            {
-                afterRegisterMessage && <p>{afterRegisterMessage}</p>
-            }
-            <p>Already have an account? Go <Link to="/login">login</Link>!</p>
+            <div>
+                <h2>Register</h2>
+                <form onSubmit={formik.handleSubmit}>
+                    <InputField
+                        inputName="username"
+                        inputId="username"
+                        inputType="text"
+                        labelText="Username:"
+                        inputValue={formik.values.username}
+                        errors={formik.errors.username}
+                        touched={formik.touched.username}
+                        inputOnBlur={formik.handleBlur}
+                        inputOnChange={formik.handleChange}
+                    />
+                    <InputField
+                        inputName="fullName"
+                        inputId="fullName"
+                        inputType="text"
+                        labelText="Name and surname:"
+                        inputValue={formik.values.fullName}
+                        errors={formik.errors.fullName}
+                        touched={formik.touched.fullName}
+                        inputOnBlur={formik.handleBlur}
+                        inputOnChange={formik.handleChange}
+                    />
+                    <InputField
+                        inputName="email"
+                        inputId="email"
+                        inputType="email"
+                        labelText="Email:"
+                        inputValue={formik.values.email}
+                        errors={formik.errors.email}
+                        touched={formik.touched.email}
+                        inputOnBlur={formik.handleBlur}
+                        inputOnChange={formik.handleChange}
+                    />
+                    <InputField
+                        inputName="password"
+                        inputId="password"
+                        inputType="password"
+                        labelText="Password:"
+                        inputValue={formik.values.password ?? ''}
+                        errors={formik.errors.password}
+                        touched={formik.touched.password}
+                        inputOnBlur={formik.handleBlur}
+                        inputOnChange={formik.handleChange}
+                    />
+                    <InputField
+                        inputName="passwordRepeat"
+                        inputId="passwordRepeat"
+                        inputType="password"
+                        labelText="Repeat password:"
+                        inputValue={formik.values.passwordRepeat ?? ''}
+                        errors={formik.errors.passwordRepeat}
+                        touched={formik.touched.passwordRepeat}
+                        inputOnBlur={formik.handleBlur}
+                        inputOnChange={formik.handleChange}
+                    />
+                    <InputField
+                        inputName="avatar"
+                        inputId="avatar"
+                        inputType="url"
+                        labelText="Profile picture:"
+                        inputValue={formik.values.avatar}
+                        errors={formik.errors.avatar}
+                        touched={formik.touched.avatar}
+                        inputOnBlur={formik.handleBlur}
+                        inputOnChange={formik.handleChange}
+                    />
+                    <input type="submit" value="Register" className='button'/>
+                </form>
+                <p>Already have an account? Go <Link to="/login" className='link'>login</Link> now!</p>
+                <Link to="/questions" className="link">I just want to read the forum</Link>
+                {
+                    afterRegisterMessage && <p className="message">{afterRegisterMessage}</p>
+                }
+            </div>
         </StyledSection>
      );
 }

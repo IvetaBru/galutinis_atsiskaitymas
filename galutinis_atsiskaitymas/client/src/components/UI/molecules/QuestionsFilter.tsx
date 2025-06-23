@@ -1,8 +1,81 @@
 import { useContext } from "react";
 import { useFormik } from "formik";
+import styled from "styled-components";
+
 import QuestionsContext from "../../../contexts/QuestionsContext";
 import { QuestionsContextType } from "../../../types";
 import CheckboxDropdown from "./CheckboxDropdown";
+
+const StyledForm = styled.form `
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 0px 32px;
+    .buttons{
+        background-color: var(--color-background);
+        border-radius: 12px;
+        padding: 2px 10px;
+        box-shadow: 0 6px 12px var(--color-secondary);
+        >button{
+            background-color: var(--color-background);            
+            border: none;
+            padding: 2px 10px;
+            font-family: "Nunito", sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            &.active{
+                color: var(--color-accentText);
+            }
+        }
+        >button:hover{
+            color: var(--color-accentText);
+        }
+    }
+    .search{
+        border-radius: 10px;
+        border: none;
+        padding: 0 10px;
+        height: 30px;
+        font-weight: 600;
+        background-color: var(--color-background);
+        box-shadow: 0 6px 12px var(--color-secondary);
+        font-family: "Nunito", sans-serif;
+    }
+    .search:hover{
+        background-color: var(--color-accent);
+        transition: 0.3s;
+    }
+    .search::placeholder{
+        color: var(--color-darkest);
+    }
+    .filterClear{
+        display: flex;
+        gap: 10px;
+        >.filter, .clear{
+            background-color: var(--color-background);
+            border: none;
+            border-radius: 12px;
+            padding: 0 10px;
+            height: 30px;
+            font-weight: 600;
+            box-shadow: 0 6px 12px var(--color-secondary);
+            font-family: "Nunito", sans-serif;
+            cursor: pointer;
+        }
+        >.filter:hover{
+            background-color: var(--color-accentText);
+            transition: 0.3s;
+        }  
+        >.clear:hover{
+            background-color: #cc7e7e;
+            transition: 0.3s;
+        }
+    }
+    @media (min-width: 0px) and (max-width: 1389px) {
+        justify-content: center;
+        margin: 20px 0px;
+    }   
+`
 
 const QuestionsFilter = () => {
 
@@ -33,8 +106,8 @@ const QuestionsFilter = () => {
     });
 
     return ( 
-        <form onSubmit={formik.handleSubmit}>
-            <div>
+        <StyledForm onSubmit={formik.handleSubmit}>
+            <div className="buttons">
                 <button
                     type="button"
                     onClick={() => {
@@ -68,13 +141,13 @@ const QuestionsFilter = () => {
             </div>
             <div>
                 <label>
-                Title:
                 <input
                     type="text"
                     name="filter_title"
                     onChange={formik.handleChange}
                     value={formik.values.filter_title}
-                    placeholder="Search..."
+                    placeholder="Search by title..."
+                    className="search"
                 />
                 </label>
             </div>
@@ -84,15 +157,18 @@ const QuestionsFilter = () => {
                     onChange={tags => formik.setFieldValue('filter_tags', tags)}
                 />
             </div>
-        <button type="submit">Filter</button>
-        <button 
-            type="button"
-            onClick={() => {
-                formik.resetForm();
-                formik.handleSubmit();
-            }}
-        >Clear</button>
-        </form>
+            <div className="filterClear">
+                <button type="submit" className="filter">Filter</button>
+                <button 
+                    type="button"
+                    onClick={() => {
+                        formik.resetForm();
+                        formik.handleSubmit();
+                    }}
+                    className="clear"
+                >Clear</button>
+            </div>
+        </StyledForm>
     );
 }
  

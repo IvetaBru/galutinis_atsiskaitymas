@@ -3,14 +3,24 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --color-primary: #8A8CAC;
+  --color-secondary: #3A3E6C;
+  --color-accent: #8387C3;
+  --color-background: #959BB5;
+  --color-darkest: #0A1123;
+  --color-accentText: #ebe497;
 }
 *{
   box-sizing: border-box;
 }
 
 body {
+  height: 100%;
   margin: 0;
+  font-family: "Nunito", sans-serif;
+  background: linear-gradient(to bottom, var(--color-primary), var(--color-secondary));
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  color: #0A1123;
 }

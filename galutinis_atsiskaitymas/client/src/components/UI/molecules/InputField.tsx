@@ -1,12 +1,45 @@
+import styled from "styled-components";
+
 import Label from "../atoms/Label";
 import Input from "../atoms/Input";
 import { InputFieldProps } from "../../../types";
+
+const StyledInput = styled.div`
+    >div{
+        display: flex;
+        flex-direction: column;
+        font-weight: 600;
+        >input{
+            margin: 10px;
+            border-radius: 10px;
+            border: none;
+            height: 30px;
+            text-align: center;
+            font-weight: 600;
+            background-color: var(--color-background);
+        }
+        >input:hover{
+            background-color: var(--color-accent);
+            transition: 0.3s;
+        }
+        >label{
+            font-size: 20px;
+            color: var(--color-darkest);
+        }
+    }
+    .errors{
+        margin: 0;
+        padding-bottom: 5px;
+        font-size: 13px;
+        color: var(--color-secondary);
+    }
+`
 
 type Props = Omit<InputFieldProps, 'labelFor'>;
 
 const InputField = ({ labelText, inputId, inputName, inputOnBlur, inputOnChange, inputType, inputValue, errors, touched }: Props) => {
     return ( 
-        <div>
+        <StyledInput>
             <div>
                 <Label
                     labelFor={inputId}
@@ -22,9 +55,9 @@ const InputField = ({ labelText, inputId, inputName, inputOnBlur, inputOnChange,
                 />
             </div>
             {
-                errors && touched && <p>{errors}</p>
+                errors && touched && <p className="errors">{errors}</p>
             }
-        </div>
+        </StyledInput>
      );
 }
  
