@@ -51,25 +51,25 @@ const StyledForm = styled.form `
     .filterClear{
         display: flex;
         gap: 10px;
-    }
-    .filter, .clear{
-        background-color: var(--color-background);
-        border: none;
-        border-radius: 12px;
-        padding: 0 10px;
-        height: 30px;
-        font-weight: 600;
-        box-shadow: 0 6px 12px var(--color-secondary);
-        font-family: "Nunito", sans-serif;
-        cursor: pointer;
-    }
-    >.filter:hover{
-        background-color: var(--color-accentText);
-        transition: 0.3s;
-    }  
-    >.clear:hover{
-        background-color: #cc7e7e;
-        transition: 0.3s;
+        >.filter, .clear{
+            background-color: var(--color-background);
+            border: none;
+            border-radius: 12px;
+            padding: 0 10px;
+            height: 30px;
+            font-weight: 600;
+            box-shadow: 0 6px 12px var(--color-secondary);
+            font-family: "Nunito", sans-serif;
+            cursor: pointer;
+        }
+        >.filter:hover{
+            background-color: var(--color-accentText);
+            transition: 0.3s;
+        }  
+        >.clear:hover{
+            background-color: #cc7e7e;
+            transition: 0.3s;
+        }
     }
     @media (min-width: 0px) and (max-width: 1389px) {
         justify-content: center;
