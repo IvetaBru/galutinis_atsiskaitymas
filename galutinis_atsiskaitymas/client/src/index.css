@@ -18,9 +18,9 @@ body {
   height: 100%;
   margin: 0;
   font-family: "Nunito", sans-serif;
-  /* font-family: "Permanent Marker", cursive;
-  font-weight: 400; */
-
-  background-color: #959BB5;
+  background: linear-gradient(to bottom, var(--color-primary), var(--color-secondary));
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
   color: #0A1123;
 }

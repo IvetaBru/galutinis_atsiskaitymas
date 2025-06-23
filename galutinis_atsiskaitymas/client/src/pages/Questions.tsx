@@ -12,7 +12,19 @@ import Pagination from "../components/UI/molecules/Pagination";
 import PageSize from "../components/UI/atoms/PageSize";
 
 const StyledSection = styled.section`
-    
+    padding: 20px 200px;
+    .questionsContainer{
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    @media (min-width: 0px) and (max-width: 767px) {
+        padding: 20px;
+    }
+    @media (min-width: 768px) and (max-width: 1024px) {
+        padding: 20px 100px;
+    }
 `
 
 const Questions = () => {
@@ -32,7 +44,7 @@ const Questions = () => {
             <QuestionsSort/>
             <QuestionsFilter/>
             <PageSize />
-            <div>
+            <div className="questionsContainer">
                 {
                     !isLoading && isEmpty && (
                         <p>No questions yet</p>
