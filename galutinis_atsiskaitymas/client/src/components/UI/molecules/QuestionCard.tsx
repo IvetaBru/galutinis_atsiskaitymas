@@ -15,6 +15,7 @@ const StyledDiv = styled.div`
     padding: 20px;
     background-color: var(--color-background);
     border-radius: 40px;
+    box-shadow: 0 6px 12px var(--color-secondary);
 
     display: grid;
     grid-template-columns: 1fr 4fr;

@@ -18,12 +18,23 @@ const StyledSection = styled.section`
         flex-direction: column;
         gap: 20px;
     }
+    .sortFilter{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: last baseline;
+    }
 
     @media (min-width: 0px) and (max-width: 767px) {
         padding: 20px;
     }
-    @media (min-width: 768px) and (max-width: 1024px) {
+    @media (min-width: 768px) and (max-width: 1080px) {
         padding: 20px 100px;
+    }
+    @media (min-width: 0px) and (max-width: 1389px) {
+        .sortFilter{
+            justify-content: center;
+        }
     }
 `
 
@@ -41,8 +52,10 @@ const Questions = () => {
                 <Link to={'/questions/ask'}><button>Ask Question</button></Link> :
                 <Link to={'/login'}><button>Ask Question</button></Link>
             }
-            <QuestionsSort/>
-            <QuestionsFilter/>
+            <div className="sortFilter">
+                <QuestionsSort/>
+                <QuestionsFilter/>
+            </div>
             <PageSize />
             <div className="questionsContainer">
                 {
