@@ -1,6 +1,44 @@
 import { useState, useRef } from "react";
+import styled from "styled-components";
 
 import { MultiSelectProps } from "../../../types";
+
+const StyledDiv = styled.div`
+    >button{
+        background-color: var(--color-background);
+        border: none;
+        border-radius: 12px;
+        padding: 0 10px;
+        margin: 10px;
+        height: 30px;
+        width: 100px;
+        font-weight: 600;
+        box-shadow: 0 6px 12px var(--color-secondary);
+        font-family: "Nunito", sans-serif;
+        cursor: pointer;
+    }
+    >button:hover{
+        background-color: var(--color-accent);
+        transition: 0.3s;
+    }
+    >p{
+        color: var(--color-secondary);
+        margin: 0;
+    }
+    .tags{
+        padding: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+    .errors{
+        margin: 0;
+        padding: 10px 0px;
+        font-size: 13px;
+        color: var(--color-secondary);
+    }
+`
 
 const MultiSelect = ({ options, selected, onChange, maxSelected=5, errors, touched }: MultiSelectProps) => {
 
@@ -17,17 +55,17 @@ const MultiSelect = ({ options, selected, onChange, maxSelected=5, errors, touch
     };
 
     return(
-        <div ref={ref}>
+        <StyledDiv ref={ref}>
         <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
         >
-            Select tags…
+            Select tags
         </button>
-        <span>({selected.length}/{maxSelected})</span>
+        <p>({selected.length}/{maxSelected})</p>
         {
             isOpen && (
-                <div>
+                <div className="tags">
                 {
                     options.map(option => {
                     const isChecked = selected.includes(option);
@@ -50,9 +88,9 @@ const MultiSelect = ({ options, selected, onChange, maxSelected=5, errors, touch
             )
         }
         {
-            errors && touched && <p>{errors}</p>   
+            errors && touched && <p className="errors">{errors}</p>   
         }
-        </div>
+        </StyledDiv>
     )
 }
  
