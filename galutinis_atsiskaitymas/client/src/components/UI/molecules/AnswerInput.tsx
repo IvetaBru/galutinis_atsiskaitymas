@@ -7,6 +7,64 @@ import { Answer, AnswersContextType } from "../../../types";
 import AnswersContext from "../../../contexts/AnswersContext";
 
 const StyledDiv = styled.div`
+    >form{
+        display: flex;
+        flex-direction: column;
+        >textarea{
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            height: 80px;
+            font-weight: 600;
+            background-color: var(--color-primary);
+            font-family: "Nunito", sans-serif;
+        }
+        >textarea:hover{
+            background-color: var(--color-accent);
+            transition: 0.3s;
+        }
+        >textarea::placeholder{
+            color: var(--color-secondary);
+        }
+        .buttons{
+            display: flex;
+            gap: 10px;
+            padding-bottom: 20px;
+            justify-content: center;
+        }
+        .add, .cancel{
+            margin: 10px 0px;
+            background-color: var(--color-background);
+            border: none;
+            border-radius: 12px;
+            padding: 0 10px;
+            height: 30px;
+            width: 100px;
+            font-weight: 600;
+            box-shadow: 0 6px 12px var(--color-secondary);
+            font-family: "Nunito", sans-serif;
+            cursor: pointer;
+        }
+        .add:hover{
+            background-color: var(--color-accentText);
+            transition: 0.3s;
+        }
+        .cancel:hover{
+            background-color: #cc7e7e;
+            transition: 0.3s;
+        }
+        .errors{
+            margin: 0;
+            padding-bottom: 5px;
+            font-size: 13px;
+            color: var(--color-secondary);
+        }
+        .message{
+            color: var(--color-accentText);
+            padding-top: 10px;
+        }
+    }
 `
 
 type Props = {
@@ -47,7 +105,6 @@ const AnswerInput = ({ isOpen, onClose}: Props) => {
 
     return ( 
         <StyledDiv>
-            <h3>Add Your Answer</h3>
             <form onSubmit={formik.handleSubmit}>
                 <textarea 
                     name="body" 
@@ -57,12 +114,14 @@ const AnswerInput = ({ isOpen, onClose}: Props) => {
                     placeholder="Enter your answer here..." 
                     rows={5}
                 />
-                {formik.touched.body && formik.errors.body && <p>{formik.errors.body}</p>}
+                {formik.touched.body && formik.errors.body && <p className="errors">{formik.errors.body}</p>}
                 {
-                    afterAnswerAddMessage && <p>{afterAnswerAddMessage}</p>
+                    afterAnswerAddMessage && <p className="message">{afterAnswerAddMessage}</p>
                 }
-                <button type="submit">Add</button>
-                <button type="button" onClick={onClose}>Cancel</button>
+                <div className="buttons">
+                    <button type="submit" className="add">Add</button>
+                    <button type="button" onClick={onClose} className="cancel">Cancel</button>
+                </div>
             </form>
         </StyledDiv>
      );

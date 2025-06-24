@@ -29,11 +29,11 @@ const StyledSection = styled.section`
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 32px;
-        border-bottom: 2px var(--color-primary) solid;
-        margin-bottom: 20px;
+        padding: 10px 0px;
+        margin-bottom: 30px;
         >h2{
             margin: 0;
+            color: var(--color-secondary);
         }
         >a{
             >button{

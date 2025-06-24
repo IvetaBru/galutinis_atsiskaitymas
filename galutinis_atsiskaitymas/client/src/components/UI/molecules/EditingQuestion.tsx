@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router";
+import styled from "styled-components";
 
 import QuestionsContext from "../../../contexts/QuestionsContext";
 import { Question, QuestionsContextType } from "../../../types";
@@ -9,6 +10,54 @@ type Props = {
     question: Question,
     onClose: () => void;
 }
+
+const StyledDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    >input, textarea{
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        height: 30px;
+        font-weight: 600;
+        background-color: var(--color-primary);
+        font-family: "Nunito", sans-serif;
+    }
+    >input:hover, textarea:hover{
+        background-color: var(--color-accent);
+        transition: 0.3s;
+    }
+    >textarea{
+        height: 80px;
+    }
+    >textarea::placeholder{
+        color: var(--color-secondary);
+    }
+    .save{
+        display: block;
+        margin: 10px auto 0;
+        background-color: var(--color-background);
+        border: none;
+        border-radius: 12px;
+        padding: 0 10px;
+        height: 30px;
+        width: 100px;
+        font-weight: 600;
+        box-shadow: 0 6px 12px var(--color-secondary);
+        font-family: "Nunito", sans-serif;
+        cursor: pointer;
+    }
+    .save:hover{
+        background-color: var(--color-accent);
+        transition: 0.3s;
+    }
+    .message{
+        color: var(--color-accentText);
+    } 
+`
 
 const EditingQuestion = ({ question, onClose }: Props) => {
 
@@ -46,7 +95,7 @@ const EditingQuestion = ({ question, onClose }: Props) => {
     };
 
     return ( 
-        <div>
+        <StyledDiv>
             <input
                 value={formData.title}
                 onChange={(e) => handleChange("title", e.target.value)}
@@ -60,12 +109,11 @@ const EditingQuestion = ({ question, onClose }: Props) => {
                 selected={formData.tags}
                 onChange={(editedTags) => setFormData({ ...formData, tags: editedTags })}
             />
-            <button onClick={handleSave}>Save</button>
-            <button onClick={onClose}>Cancel</button>
+            <button onClick={handleSave} className="save">Save</button>
             {
-                afterEditMessage && <p>{afterEditMessage}</p>
+                afterEditMessage && <p className="message">{afterEditMessage}</p>
             }
-        </div>
+        </StyledDiv>
      );
 }
  
