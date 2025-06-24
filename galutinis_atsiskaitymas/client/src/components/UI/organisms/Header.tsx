@@ -65,9 +65,7 @@ const StyledHeader = styled.header`
         object-fit: cover;
         border-radius: 50%;
     }
-    .questions{
-    }
-
+    
     @media (min-width: 0px) and (max-width: 767px) {
         padding: 20px;
         >nav{
