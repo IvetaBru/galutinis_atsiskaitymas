@@ -90,7 +90,7 @@ const Header = () => {
     return ( 
         <StyledHeader>
             <div>
-                <Link to='/'><h3><img src="../../../public/images/TripTalk.svg" alt="logo" className='logo'/></h3></Link>
+                <Link to='/'><h3><img src="../../../public/images/TripTalk1.png" alt="logo" className='logo'/></h3></Link>
             </div>
             <nav>
                 <ul>
