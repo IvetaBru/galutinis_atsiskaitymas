@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import styled from "styled-components";
 
 import { Answer, AnswersContextType } from "../../../types";
 import AnswersContext from "../../../contexts/AnswersContext";
@@ -7,6 +8,55 @@ type Props = {
     answer: Answer,
     onClose: () => void;
 }
+
+const StyledDiv= styled.div`
+    display: flex;
+    flex-direction: column;
+    >textarea{
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        height: 80px;
+        font-weight: 600;
+        background-color: var(--color-primary);
+        font-family: "Nunito", sans-serif;
+    }
+    >textarea:hover{
+        background-color: var(--color-accent);
+        transition: 0.3s;
+    }
+    >textarea::placeholder{
+        color: var(--color-secondary);
+    }
+    .buttons{
+        display: flex;
+        gap: 10px;
+        padding-bottom: 20px;
+        justify-content: center;
+    }
+    .save, .cancel{
+        margin: 10px 0px;
+        background-color: var(--color-background);
+        border: none;
+        border-radius: 12px;
+        padding: 0 10px;
+        height: 30px;
+        width: 100px;
+        font-weight: 600;
+        box-shadow: 0 6px 12px var(--color-secondary);
+        font-family: "Nunito", sans-serif;
+        cursor: pointer;
+    }
+    .save:hover{
+        background-color: var(--color-accentText);
+        transition: 0.3s;
+    }
+    .cancel:hover{
+        background-color: #cc7e7e;
+        transition: 0.3s;
+    }
+`
 
 const EditingAnswer = ({ answer, onClose }: Props) => {
 
@@ -35,19 +85,19 @@ const EditingAnswer = ({ answer, onClose }: Props) => {
     };
 
     return ( 
-        <div>
-            <div>
+        <StyledDiv>
                 <textarea
                     value={formData.body}
                     onChange={(e) => handleChange("body", e.target.value)}
                 />
-                <button onClick={handleSave}>Save</button>
-                <button onClick={onClose}>Cancel</button>
+                <div className="buttons">
+                    <button onClick={handleSave} className="save">Save</button>
+                    <button onClick={onClose} className="cancel">Cancel</button>
+                </div>
                 {
-                    afterEditMessage && <p>{afterEditMessage}</p>
+                    afterEditMessage && <p className="message">{afterEditMessage}</p>
                 }
-            </div>
-        </div>
+        </StyledDiv>
      );
 }
  
