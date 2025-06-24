@@ -19,6 +19,7 @@ const StyledSection = styled.section`
         border-radius: 40px;
         background-color: var(--color-background);
         box-shadow: 0 6px 12px var(--color-secondary);
+        margin-bottom: 20px;
     }
     
     .info, .likedQ{
