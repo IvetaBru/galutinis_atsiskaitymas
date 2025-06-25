@@ -84,13 +84,13 @@ const EditingQuestion = ({ question, onClose }: Props) => {
         const res = await editQuestion(updated);
         if('error' in res) {
             setAfterEditMessage(res.error)
-            setTimeout(() => {onClose()}, 3000);
+            setTimeout(() => {onClose()}, 2000);
         }else{
             setAfterEditMessage(res.success);
             setTimeout(() => {
                 onClose();
                 navigate(`/questions/${question._id}`);
-            }, 3000);
+            }, 2000);
         }
     };
 

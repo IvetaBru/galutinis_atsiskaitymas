@@ -52,6 +52,7 @@ const StyledSection = styled.section`
         font-family: "Nunito", sans-serif;
         color: var(--color-darkest);
         background-color: var(--color-background);
+        cursor: pointer;
     }
     .button:hover{
         background-color: var(--color-accent);

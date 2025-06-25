@@ -120,7 +120,6 @@ const UsersProvider = ({ children } : ChildrenElementProp) => {
             .then(res => res.json())
             .then(data => {
                 if('error' in data){
-                    //modal about error
                     localStorage.removeItem('accessJWT');
                     setTimeout(() => navigate('/login'), 3000);
                 }else{

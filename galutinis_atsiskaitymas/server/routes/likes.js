@@ -5,16 +5,16 @@ import { getAllLikes, toggleLike, getUserLikes, getAllUserLikedQuestions } from 
 
 const router = Router();
 
-//Gauti bendrą likes skaičių
+//get all likes count
 router.get('/count/:questionId', getAllLikes);
 
-//Like/unlike žymėjimas
+//Like/unlike
 router.post('/toggle/:questionId', verifyJWT, toggleLike);
 
-//Prisijungusio vartotojo pamėgti klausimai
+//User's liked questions
 router.get('/user-liked/:questionId', verifyJWT, getUserLikes);
 
-//Prisijungusio vartotojo visi pamėgti klausimai
+//User's all liked questions
 router.get('/liked-questions', verifyJWT, getAllUserLikedQuestions);
 
 export default router;
