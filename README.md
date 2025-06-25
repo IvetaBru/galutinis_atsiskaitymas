@@ -12,8 +12,8 @@ This project is a full-stack question-and-answer application where users can:
 
 ## Project Structure
 
-- client/ # Frontend - React + TypeScript
-- server/ # Backend - Node.js + Express + MongoDB
+- client - Frontend - React + TypeScript
+- server - Backend - Node.js + Express + MongoDB
 
 ## To Start:
 
