@@ -21,15 +21,15 @@ This project is a full-stack question-and-answer application where users can:
 
 Open your terminal, install dependencies for frontend/backend and run:
 
-# Navigate to the server folder
-cd galutinis_atsiskaitymas/server
-npm install
-npm run dev
+## Navigate to the server folder
+- cd galutinis_atsiskaitymas/server
+- npm install
+- npm run dev
 
-# Then navigate to the client folder
-cd galutinis_atsiskaitymas/client
-npm install
-npm run dev
+## Then navigate to the client folder
+- cd galutinis_atsiskaitymas/client
+- npm install
+- npm run dev
 
 ## Project features:
 
