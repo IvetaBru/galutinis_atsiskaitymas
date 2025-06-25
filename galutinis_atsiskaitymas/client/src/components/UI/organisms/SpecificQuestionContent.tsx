@@ -14,6 +14,17 @@ import EditingAnswer from "../molecules/EditingAnswer";
 const StyledSection = styled.section`
     padding: 20px 200px;
     font-weight: 600;
+    @keyframes glow {
+        0% {
+        box-shadow: 0 0 5px var(--color-accent), 0 0 10px var(--color-accentText);
+        }
+        50% {
+        box-shadow: 0 0 20px var(--color-accentText), 0 0 30px var(--color-accent);
+        }
+        100% {
+        box-shadow: 0 0 5px var(--color-accent), 0 0 10px var(--color-accentText);
+        }
+    }
     .container{
         display: flex;
         flex-direction: column;

@@ -11,18 +11,28 @@ import { Question, QuestionsContextType } from "../types";
 
 const StyledSection = styled.section`
     padding: 20px 200px;
+    color: var(--color-secondary);
+    text-align: center;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     >form{
-        background-color: #ffffff19;
-        backdrop-filter: blur(10px);
+        background-color: var(--color-background);
         border-radius: 40px;
         padding: 50px 30px;
-        min-width: 300px;
-        max-width: 800px;
+        width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        text-align: center;
-        font-weight: 600;
+        >div{
+            >div{
+                >input{
+                    background-color: var(--color-primary);
+                }
+            }
+        }
         >label{
             font-size: 20px;
             color: var(--color-darkest);
@@ -35,7 +45,12 @@ const StyledSection = styled.section`
             border: none;
             height: 100px;
             font-weight: 600;
-            background-color: var(--color-background);
+            background-color: var(--color-primary);
+            font-family: "Nunito", sans-serif;
+        }
+        >textarea:hover{
+            background-color: var(--color-accent);
+            transition: 0.3s;
         }
         >textarea::placeholder{
             color: var(--color-secondary);
@@ -51,12 +66,12 @@ const StyledSection = styled.section`
         height: 30px;
         width: 100px;
         font-weight: 600;
-        box-shadow: 0 6px 12px var(--color-secondary);
+        box-shadow: 0 1px 2px var(--color-secondary);
         font-family: "Nunito", sans-serif;
         cursor: pointer;
     }
     .ask:hover{
-        background-color: var(--color-accent);
+        background-color: var(--color-accentText);
         transition: 0.3s;
     }
     .errors{
@@ -75,6 +90,15 @@ const StyledSection = styled.section`
     }
     @media (min-width: 768px) and (max-width: 1080px) {
         padding: 20px 100px;
+        >form{
+            width: 80%;
+        }
+    }
+    @media (min-width: 1081px){
+        padding: 20px 200px;
+        >form{
+            width: 60%;
+        }
     }
 `
 
