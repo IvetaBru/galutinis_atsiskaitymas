@@ -51,6 +51,7 @@ const StyledSection = styled.section`
         font-family: "Nunito", sans-serif;
         color: var(--color-darkest);
         background-color: var(--color-background);
+        cursor: pointer;
     }
     .button:hover{
         background-color: var(--color-accent);
@@ -109,26 +110,26 @@ const Login = () => {
                 <h2>Login</h2>
                 <form onSubmit={formik.handleSubmit}>
                     <InputField 
-                    inputName="username"
-                    inputId="username"
-                    inputType="text"
-                    labelText="Username:"
-                    inputValue={formik.values.username}
-                    errors={formik.errors.username}
-                    touched={formik.touched.username}
-                    inputOnBlur={formik.handleBlur}
-                    inputOnChange={formik.handleChange}
+                        inputName="username"
+                        inputId="username"
+                        inputType="text"
+                        labelText="Username:"
+                        inputValue={formik.values.username}
+                        errors={formik.errors.username}
+                        touched={formik.touched.username}
+                        inputOnBlur={formik.handleBlur}
+                        inputOnChange={formik.handleChange}
                     />
                     <InputField 
-                    inputName="password"
-                    inputId="password"
-                    inputType="password"
-                    labelText="Password:"
-                    inputValue={formik.values.password ?? ''}
-                    errors={formik.errors.password}
-                    touched={formik.touched.password}
-                    inputOnBlur={formik.handleBlur}
-                    inputOnChange={formik.handleChange}
+                        inputName="password"
+                        inputId="password"
+                        inputType="password"
+                        labelText="Password:"
+                        inputValue={formik.values.password ?? ''}
+                        errors={formik.errors.password}
+                        touched={formik.touched.password}
+                        inputOnBlur={formik.handleBlur}
+                        inputOnChange={formik.handleChange}
                     />
                     <input type="submit" value="Login" className='button'/>
                 </form>

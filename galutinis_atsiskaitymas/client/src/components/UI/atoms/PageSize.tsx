@@ -25,8 +25,8 @@ const StyledDiv = styled.div`
         box-shadow: 0 6px 12px var(--color-secondary);
     }
     @media (min-width: 0px) and (max-width: 1389px) {
-            justify-content: center;
-            padding: 0px;
+        justify-content: center;
+        padding: 0px;
     }
 `
 
@@ -47,7 +47,7 @@ const PageSize = () => {
                 <option value="10">10</option>
             </select>
         </StyledDiv>
-     );
+    );
 }
  
 export default PageSize;

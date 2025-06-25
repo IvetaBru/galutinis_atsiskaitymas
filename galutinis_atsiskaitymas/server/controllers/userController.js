@@ -112,9 +112,6 @@ export const editUserInfo = async (req, res) => {
                 {_id},
                 {$set: updatedFields}
             );
-        // if (result.modifiedCount === 0) {
-        //     return res.status(400).send({ error: 'No changes were made' });
-        // }
         const updatedUser = await client
             .db('Final_Project')
             .collection('users')
