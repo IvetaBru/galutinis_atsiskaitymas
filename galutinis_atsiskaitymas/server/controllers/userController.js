@@ -72,7 +72,7 @@ export const register = async (req, res) => {
             email: req.body.email,
             avatar: req.body.avatar || "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg",
             password: bcrypt.hashSync(req.body.password, 10),
-            createdAt: new Date().toISOString()
+            createdAt: new Date()
         }
         await client.db('Final_Project').collection('users').insertOne(newUser);
         const { password, ...restUserInfo} = newUser;
