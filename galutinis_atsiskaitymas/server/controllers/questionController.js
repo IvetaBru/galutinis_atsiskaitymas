@@ -180,6 +180,10 @@ export const deleteQuestion = async (req, res) => {
             .db('Final_Project')
             .collection('answers')
             .deleteMany({ questionId: _id});
+        await client
+            .db('Final_Project')
+            .collection('likes')
+            .deleteMany({ questionId: _id });
         const result = await client
             .db('Final_Project')
             .collection('questions')
