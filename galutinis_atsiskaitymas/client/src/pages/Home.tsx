@@ -4,7 +4,7 @@ import { Link } from "react-router";
 const StyledSection = styled.section`
     padding: 20px 200px;
     min-height: calc(100vh - 80px);
-    background-image: url("../../../public/images/Hero1.png");
+    background-image: url("/images/Hero1.png");
     background-repeat: no-repeat;
     background-position: bottom right;
     background-size: contain;
@@ -103,7 +103,7 @@ const Home = () => {
     return ( 
         <StyledSection>
             <div className="logo">
-                <img src="../../../public/images/TripTalk1.png" alt="logo" />
+                <img src="/images/TripTalk1.png" alt="logo" />
             </div>
             <div className="text">
                 <p>Welcome to <b className="logReg">TripTalk</b> - your go-to place for travel questions and answers. Get advice, share experiences, and explore the world with fellow travelers.</p>
