@@ -53,12 +53,10 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
         fetchData(); 
     }
 
-    const getFilteredDataAmount = () => {
-        fetch(`http://localhost:5500/questions/getCount?${filter.current}`)
-        .then(res => res.json())
-        .then(data => {
-            setFilteredDataAmount(data.totalAmount);
-        });
+    const getFilteredDataAmount = async () => {
+        const res = await fetch(`http://localhost:5500/questions/getCount?${filter.current}`)
+        const data = await res.json();   
+        setFilteredDataAmount(data.totalAmount);
     }
 
     const fetchData = async () => {
@@ -102,6 +100,7 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
         });
         setCurrentPage(1);
         await refetchQuestions();
+        await getFilteredDataAmount();
         return { success: data.success };
     }
 
@@ -126,6 +125,7 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
         });
         setCurrentPage(1);
         await refetchQuestions();
+        await getFilteredDataAmount();
         return { success: data.success };
     }
 
