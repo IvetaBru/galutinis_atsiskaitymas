@@ -1,7 +1,7 @@
 import { createContext, useEffect, useReducer, useRef, useState } from "react";
+import { useLocation } from "react-router";
 
 import { Question, ChildrenElementProp, QuestionActionTypes, QuestionsContextType } from "../types";
-import { useNavigate } from "react-router";
 
 const reducer = (state: Question[], action: QuestionActionTypes): Question[] => {
     switch(action.type){
@@ -25,9 +25,8 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
 
     const [questions, dispatch] = useReducer(reducer, []);
     const [isLoading, setIsLoading] = useState(true);
-    const navigate = useNavigate();
-
     const sort = useRef('sort_createdAt=-1');
+    const location = useLocation();
     const filter = useRef('');
     const [pageSize, setPageSize] = useState(2);
     const [currentPage, setCurrentPage] = useState(1);
@@ -52,15 +51,15 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     
     const changeFilter = (filterValue: string) => {
         filter.current = filterValue;
+        setCurrentPage(1);
         fetchData(); 
+        getFilteredDataAmount();
     }
 
-    const getFilteredDataAmount = () => {
-        fetch(`http://localhost:5500/questions/getCount?${filter.current}`)
-        .then(res => res.json())
-        .then(data => {
-            setFilteredDataAmount(data.totalAmount);
-        });
+    const getFilteredDataAmount = async () => {
+        const res = await fetch(`http://localhost:5500/questions/getCount?${filter.current}`)
+        const data = await res.json();   
+        setFilteredDataAmount(data.totalAmount);
     }
 
     const fetchData = async () => {
@@ -102,27 +101,35 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
             type: "addQuestion",
             newQuestion: data.newQuestion
         });
+        setCurrentPage(1);
+        await refetchQuestions();
+        await getFilteredDataAmount();
         return { success: data.success };
     }
 
-    const deleteQuestion = (_id: Question['_id']) => {
+    const deleteQuestion = async (_id: Question['_id']) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
         const confirm = window.confirm("Do you want to delete it?");
         if (!confirm) return;
 
-        fetch(`http://localhost:5500/questions/${_id}`, {
+        const backResponse = await fetch(`http://localhost:5500/questions/${_id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${accessJWT}`
-            },
-        })
-        .then(() => {
-            dispatch({
-                type: "deleteQuestion",
-                _id
-            });
-            navigate('/questions')
+            }
         });
+        const data = await backResponse.json();
+        if('error' in data){
+            return { error: data.error };
+        } 
+        dispatch({
+            type: "deleteQuestion",
+            _id
+        });
+        setCurrentPage(1);
+        await refetchQuestions();
+        await getFilteredDataAmount();
+        return { success: data.success };
     }
 
     const editQuestion = async (editedQuestion: Question) => {
@@ -148,15 +155,27 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     }
 
     useEffect(() => {
-    fetchData();
-    getFilteredDataAmount();
+        fetchData();
+        getFilteredDataAmount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageSize, currentPage]);
 
     useEffect(() => {
         setCurrentPage(1);
         fetchData();
         getFilteredDataAmount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filter.current, sort.current]);
+
+    useEffect(() => {
+    if (!location.pathname.startsWith("/questions")) {
+        filter.current = '';
+        setCurrentPage(1);
+        fetchData();
+        getFilteredDataAmount();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.pathname]);
 
     return(
         <QuestionsContext.Provider

@@ -125,13 +125,13 @@ const UserInfo = () => {
       .then(res => res.json())
       .then(data => {
         if ("error" in data) {
-          console.error("Klaida:", data.error);
+          console.error("Error:", data.error);
         } else {
           setFavoriteQuestions(data.questions);
         }
       })
       .catch(err => {
-        console.error("Serverio arba tinklo klaida:", err);
+        console.error("Server error:", err);
       })
       .finally(() => {
         setLoading(false);

@@ -13,16 +13,15 @@ import PageSize from "../components/UI/atoms/PageSize";
 
 const StyledSection = styled.section`
     padding: 20px 200px;
-
     @keyframes glow {
         0% {
-            box-shadow: 0 0 5px var(--color-accent), 0 0 10px var(--color-accentText);
+        box-shadow: 0 0 5px var(--color-accent), 0 0 10px var(--color-accentText);
         }
         50% {
-            box-shadow: 0 0 20px var(--color-accentText), 0 0 30px var(--color-accent);
+        box-shadow: 0 0 20px var(--color-accentText), 0 0 30px var(--color-accent);
         }
         100% {
-            box-shadow: 0 0 5px var(--color-accent), 0 0 10px var(--color-accentText);
+        box-shadow: 0 0 5px var(--color-accent), 0 0 10px var(--color-accentText);
         }
     }
     >.start{

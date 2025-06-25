@@ -62,6 +62,7 @@ const StyledDiv = styled.div`
         font-size: 12px;
         border: none;
         background-color: var(--color-background);
+        cursor: pointer;
         >svg{
             color: var(--color-secondary);
             font-size: 20px;

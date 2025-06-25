@@ -137,14 +137,19 @@ export const editAnswer = async (req, res) => {
         const result = await client
             .db('Final_Project')
             .collection('answers')
-            .updateOne(
+            .findOneAndUpdate(
                 {_id},
-                {$set: updatedFields}
+                {$set: updatedFields},
+                {returnDocument: 'after'}
             );
-        if (result.modifiedCount === 0) {
-            return res.status(400).send({ error: 'No changes were made' });
+        const updatedAnswer = {
+            ...existingAnswer,
+            ...updatedFields
+        };
+        if (!updatedAnswer) {
+            return res.status(400).send({ error: 'Update failed' });
         }
-        res.send({ success: 'Answer updated successfully' });
+        res.send({ success: 'Answer updated successfully', updatedAnswer });
     }catch(err){
         console.log(err);
         res.status(500).send({ error: err.message, message: `Something went wrong with servers, please try again later.` });

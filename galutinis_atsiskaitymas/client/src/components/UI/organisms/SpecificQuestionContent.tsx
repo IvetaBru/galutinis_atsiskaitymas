@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useContext, useState, useEffect } from "react";
 import { useParams } from "react-router";
+import { useNavigate } from "react-router";
 
 import QuestionsContext from "../../../contexts/QuestionsContext";
 import { AnswersContextType, Question, QuestionsContextType, UserContextType } from "../../../types";
@@ -13,6 +14,17 @@ import EditingAnswer from "../molecules/EditingAnswer";
 const StyledSection = styled.section`
     padding: 20px 200px;
     font-weight: 600;
+    @keyframes glow {
+        0% {
+        box-shadow: 0 0 5px var(--color-accent), 0 0 10px var(--color-accentText);
+        }
+        50% {
+        box-shadow: 0 0 20px var(--color-accentText), 0 0 30px var(--color-accent);
+        }
+        100% {
+        box-shadow: 0 0 5px var(--color-accent), 0 0 10px var(--color-accentText);
+        }
+    }
     .container{
         display: flex;
         flex-direction: column;
@@ -108,22 +120,56 @@ const StyledSection = styled.section`
 
 const SpecificQuestionContent = () => {
 
+    const navigate = useNavigate();
     const {_id} = useParams();
     const { questions, isLoading, deleteQuestion } = useContext(QuestionsContext) as QuestionsContextType;
     const { answers, answerIsLoading, deleteAnswer } = useContext(AnswersContext) as AnswersContextType;
     const { loggedInUser } = useContext(UsersContext) as UserContextType;
 
+    const [isQuestionLoading, setIsQuestionLoading] = useState(true);
     const [ question, setQuestion ] = useState<Question | null>(null);
     const [ isEditing, setIsEditing ] = useState(false);
     const [editingAnswerId, setEditingAnswerId] = useState<string | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     
     useEffect(() => {
-        if(!isLoading && questions.length){
+        if (!_id) {
+        setQuestion(null);
+        setIsQuestionLoading(false);
+        return;
+    }
+        setIsQuestionLoading(true);
+        if (!isLoading && questions.length) {
             const found = questions.find(q => q._id === _id);
-            setQuestion(found || null);
+            if (found) {
+                setQuestion(found);
+                setIsQuestionLoading(false);
+                return;
+            }
         }
-    }, [_id, questions, isLoading]);
+        fetch(`http://localhost:5500/questions/${_id}`)
+        .then(res => {
+            if (res.status === 404) {
+                navigate('/questions');
+                return null;
+            }
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (data) {
+                setQuestion(data);
+            }
+        })
+        .catch(err => {
+            console.error('Question fetch error:', err.message);
+            setQuestion(null);
+            navigate('/questions');
+        })
+        .finally(() => setIsQuestionLoading(false));
+    }, [_id, questions, isLoading, navigate]);
 
     return ( 
         <StyledSection>
@@ -138,10 +184,17 @@ const SpecificQuestionContent = () => {
                     </div>
                 )}
                 {
-                    isLoading ? <p>Data is loading...</p> :
+                    isQuestionLoading ? <p>Data is loading...</p> :
                     !question ? <p>Question not found</p> :
                     isEditing && question.authorId === loggedInUser?._id ? (
-                        <EditingQuestion question={question} onClose={() => setIsEditing(false)} />
+                        <EditingQuestion question={question} 
+                            onClose={() => {
+                                setIsEditing(false);
+                                fetch(`http://localhost:5500/questions/${_id}`)
+                                .then(res => res.json())
+                                .then(data => setQuestion(data));
+                            }} 
+                            />
                     ) : (
                         <div>
                             <div className="dates">
@@ -177,7 +230,9 @@ const SpecificQuestionContent = () => {
                                     editingAnswerId && editingAnswerId === answer._id ? (
                                         <EditingAnswer
                                         answer={answer}
-                                        onClose={() => setEditingAnswerId (null)}
+                                        onClose={() => {
+                                            setEditingAnswerId(null);
+                                        }}
                                     />
                                 ) : (
                                     <div className="oneAnswer">
