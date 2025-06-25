@@ -63,7 +63,7 @@ const Footer = () => {
                 <a href="#">Terms and Uses</a>
             </div>
             <div className="rights">
-                <span>©Copyrights Iveta Bružė, 2025</span>
+                <span>© Copyrights TripTalk, 2025</span>
             </div>
         </StyledFooter>
      );

@@ -77,7 +77,6 @@ const StyledHeader = styled.header`
     @media (min-width: 768px) and (max-width: 1080px) {
         padding: 20px 100px;
     }
-    
 `
 
 const Header = () => {
@@ -88,7 +87,7 @@ const Header = () => {
     return ( 
         <StyledHeader>
             <div>
-                <Link to='/'><h3><img src="../../../public/images/TripTalk1.png" alt="logo" className='logo'/></h3></Link>
+                <Link to='/'><h3><img src="/images/TripTalk1.png" alt="logo" className='logo'/></h3></Link>
             </div>
             <nav>
                 <ul>

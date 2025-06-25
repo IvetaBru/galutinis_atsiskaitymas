@@ -46,12 +46,12 @@ const StyledDiv = styled.div`
         height: 30px;
         width: 100px;
         font-weight: 600;
-        box-shadow: 0 6px 12px var(--color-secondary);
+        box-shadow: 0 1px 2px var(--color-secondary);
         font-family: "Nunito", sans-serif;
         cursor: pointer;
     }
     .save:hover{
-        background-color: var(--color-accent);
+        background-color: var(--color-accentText);
         transition: 0.3s;
     }
     .message{

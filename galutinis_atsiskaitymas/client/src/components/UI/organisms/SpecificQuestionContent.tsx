@@ -36,7 +36,7 @@ const StyledSection = styled.section`
         padding: 0 10px;
         height: 30px;
         font-weight: 600;
-        box-shadow: 0 6px 12px var(--color-secondary);
+        box-shadow: 0 1px 2px var(--color-secondary);
         font-family: "Nunito", sans-serif;
         cursor: pointer;
     }
