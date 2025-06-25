@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useContext, useState, useEffect } from "react";
 import { useParams } from "react-router";
+import { useNavigate } from "react-router";
 
 import QuestionsContext from "../../../contexts/QuestionsContext";
 import { AnswersContextType, Question, QuestionsContextType, UserContextType } from "../../../types";
@@ -108,6 +109,7 @@ const StyledSection = styled.section`
 
 const SpecificQuestionContent = () => {
 
+    const navigate = useNavigate();
     const {_id} = useParams();
     const { questions, isLoading, deleteQuestion } = useContext(QuestionsContext) as QuestionsContextType;
     const { answers, answerIsLoading, deleteAnswer } = useContext(AnswersContext) as AnswersContextType;
@@ -120,30 +122,43 @@ const SpecificQuestionContent = () => {
     const [isOpen, setIsOpen] = useState(false);
     
     useEffect(() => {
+        if (!_id) {
+        setQuestion(null);
+        setIsQuestionLoading(false);
+        return;
+    }
         setIsQuestionLoading(true);
-        if(!isLoading && questions.length){
+        if (!isLoading && questions.length) {
             const found = questions.find(q => q._id === _id);
-            if(found){
+            if (found) {
                 setQuestion(found);
                 setIsQuestionLoading(false);
                 return;
             }
-        }fetch(`http://localhost:5500/questions/${_id}`)
-        .then(res => res.json())
+        }
+        fetch(`http://localhost:5500/questions/${_id}`)
+        .then(res => {
+            if (res.status === 404) {
+                navigate('/questions');
+                return null;
+            }
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
         .then(data => {
-                if (data && !('error' in data)) {
+            if (data) {
                 setQuestion(data);
-            } else {
-                console.error('Question fetch error:', data?.error || "Unknown");
-                setQuestion(null);
             }
         })
         .catch(err => {
-            console.error('Server error:', err);
+            console.error('Question fetch error:', err.message);
             setQuestion(null);
+            navigate('/questions');
         })
-        .finally(() => setIsQuestionLoading(false));          
-    }, [_id, questions, isLoading]);
+        .finally(() => setIsQuestionLoading(false));
+    }, [_id, questions, isLoading, navigate]);
 
     return ( 
         <StyledSection>

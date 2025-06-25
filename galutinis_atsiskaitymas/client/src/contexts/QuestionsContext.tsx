@@ -1,7 +1,6 @@
 import { createContext, useEffect, useReducer, useRef, useState } from "react";
 
 import { Question, ChildrenElementProp, QuestionActionTypes, QuestionsContextType } from "../types";
-import { useNavigate } from "react-router";
 
 const reducer = (state: Question[], action: QuestionActionTypes): Question[] => {
     switch(action.type){
@@ -25,7 +24,6 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
 
     const [questions, dispatch] = useReducer(reducer, []);
     const [isLoading, setIsLoading] = useState(true);
-    const navigate = useNavigate();
 
     const sort = useRef('sort_createdAt=-1');
     const filter = useRef('');
@@ -102,27 +100,33 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
             type: "addQuestion",
             newQuestion: data.newQuestion
         });
+        setCurrentPage(1);
+        await refetchQuestions();
         return { success: data.success };
     }
 
-    const deleteQuestion = (_id: Question['_id']) => {
+    const deleteQuestion = async (_id: Question['_id']) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
         const confirm = window.confirm("Do you want to delete it?");
         if (!confirm) return;
 
-        fetch(`http://localhost:5500/questions/${_id}`, {
+        const backResponse = await fetch(`http://localhost:5500/questions/${_id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${accessJWT}`
-            },
-        })
-        .then(() => {
-            dispatch({
-                type: "deleteQuestion",
-                _id
-            });
-            navigate('/questions')
+            }
         });
+        const data = await backResponse.json();
+        if('error' in data){
+            return { error: data.error };
+        } 
+        dispatch({
+            type: "deleteQuestion",
+            _id
+        });
+        setCurrentPage(1);
+        await refetchQuestions();
+        return { success: data.success };
     }
 
     const editQuestion = async (editedQuestion: Question) => {
@@ -150,12 +154,14 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     useEffect(() => {
     fetchData();
     getFilteredDataAmount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageSize, currentPage]);
 
     useEffect(() => {
         setCurrentPage(1);
         fetchData();
         getFilteredDataAmount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filter.current, sort.current]);
 
     return(
