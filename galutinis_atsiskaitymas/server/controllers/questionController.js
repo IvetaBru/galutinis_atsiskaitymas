@@ -110,7 +110,16 @@ export const getSpecQuestion = async (req, res) => {
         if(!question){
             return res.status(404).send({ error: `Question with id ${_id} not found.`});
         }
-        res.json(question);
+        const author = await client
+            .db('Final_Project')
+            .collection('users')
+            .findOne({ _id: question.authorId });
+
+        const questionWithUsername = {
+            ...question,
+            authorUsername: author ? author.username : "Unknown"
+        };
+        res.json(questionWithUsername);
     }catch(err){
         console.error(err);
         res.status(500).send({ error: err, message: `Something went wrong with server, please try again later.` });

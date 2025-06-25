@@ -113,16 +113,36 @@ const SpecificQuestionContent = () => {
     const { answers, answerIsLoading, deleteAnswer } = useContext(AnswersContext) as AnswersContextType;
     const { loggedInUser } = useContext(UsersContext) as UserContextType;
 
+    const [isQuestionLoading, setIsQuestionLoading] = useState(true);
     const [ question, setQuestion ] = useState<Question | null>(null);
     const [ isEditing, setIsEditing ] = useState(false);
     const [editingAnswerId, setEditingAnswerId] = useState<string | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     
     useEffect(() => {
+        setIsQuestionLoading(true);
         if(!isLoading && questions.length){
             const found = questions.find(q => q._id === _id);
-            setQuestion(found || null);
-        }
+            if(found){
+                setQuestion(found);
+                setIsQuestionLoading(false);
+                return;
+            }
+        }fetch(`http://localhost:5500/questions/${_id}`)
+        .then(res => res.json())
+        .then(data => {
+                if (data && !('error' in data)) {
+                setQuestion(data);
+            } else {
+                console.error('Question fetch error:', data?.error || "Unknown");
+                setQuestion(null);
+            }
+        })
+        .catch(err => {
+            console.error('Server error:', err);
+            setQuestion(null);
+        })
+        .finally(() => setIsQuestionLoading(false));          
     }, [_id, questions, isLoading]);
 
     return ( 
@@ -138,10 +158,17 @@ const SpecificQuestionContent = () => {
                     </div>
                 )}
                 {
-                    isLoading ? <p>Data is loading...</p> :
+                    isQuestionLoading ? <p>Data is loading...</p> :
                     !question ? <p>Question not found</p> :
                     isEditing && question.authorId === loggedInUser?._id ? (
-                        <EditingQuestion question={question} onClose={() => setIsEditing(false)} />
+                        <EditingQuestion question={question} 
+                            onClose={() => {
+                                setIsEditing(false);
+                                fetch(`http://localhost:5500/questions/${_id}`)
+                                .then(res => res.json())
+                                .then(data => setQuestion(data));
+                            }} 
+                            />
                     ) : (
                         <div>
                             <div className="dates">
@@ -177,7 +204,9 @@ const SpecificQuestionContent = () => {
                                     editingAnswerId && editingAnswerId === answer._id ? (
                                         <EditingAnswer
                                         answer={answer}
-                                        onClose={() => setEditingAnswerId (null)}
+                                        onClose={() => {
+                                            setEditingAnswerId(null);
+                                        }}
                                     />
                                 ) : (
                                     <div className="oneAnswer">

@@ -12,6 +12,7 @@ const reducer = (state: Answer[], action: AnswerActionTypes): Answer[] => {
         case 'deleteAnswer':
             return state.filter(q => q._id !== action._id);
         case 'editAnswer':
+            if (!action.editedAnswer || !action.editedAnswer._id) return state;
             return state.map(answer =>
                 answer._id === action.editedAnswer._id ? action.editedAnswer : answer
             );
@@ -92,7 +93,7 @@ const AnswersProvider = ({ children, questionId }: Props) => {
         }
         dispatch({
             type: "editAnswer",
-            editedAnswer
+            editedAnswer: data.updatedAnswer
         });
         return { success: data.success };
     }
