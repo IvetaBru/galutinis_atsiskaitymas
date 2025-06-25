@@ -1,4 +1,5 @@
 import { createContext, useEffect, useReducer, useRef, useState } from "react";
+import { useLocation } from "react-router";
 
 import { Question, ChildrenElementProp, QuestionActionTypes, QuestionsContextType } from "../types";
 
@@ -24,8 +25,8 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
 
     const [questions, dispatch] = useReducer(reducer, []);
     const [isLoading, setIsLoading] = useState(true);
-
     const sort = useRef('sort_createdAt=-1');
+    const location = useLocation();
     const filter = useRef('');
     const [pageSize, setPageSize] = useState(2);
     const [currentPage, setCurrentPage] = useState(1);
@@ -50,7 +51,9 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     
     const changeFilter = (filterValue: string) => {
         filter.current = filterValue;
+        setCurrentPage(1);
         fetchData(); 
+        getFilteredDataAmount();
     }
 
     const getFilteredDataAmount = async () => {
@@ -152,8 +155,8 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
     }
 
     useEffect(() => {
-    fetchData();
-    getFilteredDataAmount();
+        fetchData();
+        getFilteredDataAmount();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageSize, currentPage]);
 
@@ -163,6 +166,16 @@ const QuestionsProvider = ({ children }: ChildrenElementProp) => {
         getFilteredDataAmount();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filter.current, sort.current]);
+
+    useEffect(() => {
+    if (!location.pathname.startsWith("/questions")) {
+        filter.current = '';
+        setCurrentPage(1);
+        fetchData();
+        getFilteredDataAmount();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.pathname]);
 
     return(
         <QuestionsContext.Provider
