@@ -56,9 +56,6 @@ const AnswersProvider = ({ children, questionId }: Props) => {
 
     const deleteAnswer = async (_id: Answer['_id']) => {
         const accessJWT = localStorage.getItem('accessJWT') || sessionStorage.getItem('accessJWT');
-        const confirm = window.confirm("Do you want to delete it?");
-        if (!confirm) return;
-    
         const backResponse = await fetch(`http://localhost:5500/questions/answers/${_id}`, {
             method: "DELETE",
             headers: {

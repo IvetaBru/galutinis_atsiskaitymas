@@ -10,6 +10,7 @@ import EditingQuestion from "../molecules/EditingQuestion";
 import AnswersContext from "../../../contexts/AnswersContext";
 import AnswerInput from "../molecules/AnswerInput";
 import EditingAnswer from "../molecules/EditingAnswer";
+import ConfirmModal from "../molecules/ConfirmModal";
 
 const StyledSection = styled.section`
     padding: 20px 200px;
@@ -131,7 +132,9 @@ const SpecificQuestionContent = () => {
     const [ isEditing, setIsEditing ] = useState(false);
     const [editingAnswerId, setEditingAnswerId] = useState<string | null>(null);
     const [isOpen, setIsOpen] = useState(false);
-    
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [onConfirmDelete, setOnConfirmDelete] = useState<(() => Promise<void>) | null>(null);
+
     useEffect(() => {
         if (!_id) {
         setQuestion(null);
@@ -177,7 +180,13 @@ const SpecificQuestionContent = () => {
                 {
                     question && question.authorId === loggedInUser?._id && (
                     <div className="buttons">
-                        <button onClick={() => deleteQuestion(question._id)} className="delete">Delete</button>
+                        <button onClick={() => {
+                            setOnConfirmDelete(() => async () => {
+                                await deleteQuestion(question._id);
+                            });
+                            setShowConfirmModal(true);
+                        }} 
+                        className="delete">Delete</button>
                         <button onClick={() => setIsEditing((prev) => !prev)} className={`edit ${isEditing ? "cancel" : ""}`}>
                             {isEditing ? "Cancel" : "Edit"}
                         </button>
@@ -248,7 +257,12 @@ const SpecificQuestionContent = () => {
                                         {
                                             answer.authorId === loggedInUser?._id && (
                                                 <div className="buttons">
-                                                    <button onClick={() => deleteAnswer(answer._id)} className="delete">Delete</button>
+                                                    <button onClick={() => {
+                                                        setOnConfirmDelete(() => async () => {
+                                                            await deleteAnswer(answer._id);
+                                                        });
+                                                        setShowConfirmModal(true);
+                                                    }} className="delete">Delete</button>
                                                     {
                                                     editingAnswerId !== answer._id && (
                                                         <button onClick={() => setEditingAnswerId(answer._id)} className="edit">Edit</button>
@@ -263,6 +277,21 @@ const SpecificQuestionContent = () => {
                         ) : (<p>No answers yet</p>)
                     }
             </div>
+            <ConfirmModal
+                isOpen={showConfirmModal}
+                onCancel={() => {
+                    setShowConfirmModal(false);
+                    setOnConfirmDelete(null);
+                }}
+                onConfirm={async () => {
+                    if (onConfirmDelete) {
+                        await onConfirmDelete();
+                    }
+                    setShowConfirmModal(false);
+                    setOnConfirmDelete(null);
+                }}
+                message="Do you really want to delete it?"
+            />
         </StyledSection>
     );
 }
